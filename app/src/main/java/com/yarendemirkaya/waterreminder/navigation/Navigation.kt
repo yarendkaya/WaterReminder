@@ -1,7 +1,6 @@
 package com.yarendemirkaya.waterreminder.navigation
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -10,7 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,32 +30,30 @@ fun Navigation(navController: NavHostController) {
             val viewModel: LoginViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
-            val lifecycleOwner = LocalLifecycleOwner.current
 
-            LaunchedEffect(uiEffect, lifecycleOwner) {
-                lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    uiEffect.collect {
-                        when (it) {
-                            is LoginContract.LoginUiEffect.ShowToast -> {
-                                Log.d("LoginViewModel", "ShowToast: ${it.message}")
-                            }
-
-                            is LoginContract.LoginUiEffect.GoToHomeScreen -> {
-                                navController.navigate("home")
-                            }
-
-                            else -> {}
+            LaunchedEffect(Unit) {
+                uiEffect.collect { effect ->
+                    when (effect) {
+                        is LoginContract.LoginUiEffect.ShowToast -> {
+                            Log.d("LoginViewModel", "ShowToast: ${effect.message}")
                         }
+                        is LoginContract.LoginUiEffect.GoToHomeScreen -> {
+                            navController.navigate("home"){
+                                popUpTo("login") { inclusive = true }
+                            }
+                        }
+                        is LoginContract.LoginUiEffect.GoToRegisterScreen -> {
+                            navController.navigate("register")
+                        }
+                        else -> {}
                     }
                 }
             }
 
+
             LoginScreen(
                 uiState = uiState,
                 onAction = viewModel::onAction,
-                onNavigateHomeScreen = {
-                    navController.navigate("home")
-                },
                 onNavigateToRegisterScreen = {
                     navController.navigate("register")
                 }

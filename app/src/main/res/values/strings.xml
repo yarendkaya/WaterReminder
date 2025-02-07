@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">WaterReminder</string>
+    <string name="application_name">Water Reminder</string>
+    <string name="welcome_message">Welcome to Water Reminder</string>
+    <string name="register_title">Register</string>
+    <string name="register_button">Register</string>
+    <string name="login_button">Login</string>
+    <string name="register_email_hint">Email</string>
+    <string name="register_password_hint">Password</string>
+    <string name="register_confirm_password_hint">Confirm Password</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_title">Log In</string>
+    <string name="description">Create your water drinking routine with water reminder</string>
 
 </resources>
