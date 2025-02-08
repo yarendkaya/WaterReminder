@@ -35,8 +35,6 @@ fun LoginScreen(
 ) {
 
     Box(modifier = Modifier.fillMaxSize()) {
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
