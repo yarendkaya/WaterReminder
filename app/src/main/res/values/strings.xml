@@ -12,5 +12,8 @@
     <string name="login_password_hint">Password</string>
     <string name="login_title">Log In</string>
     <string name="description">Create your water drinking routine with water reminder</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="add_water"> Add (200 ml)</string>
+    <string name="add_icon">+</string>
 
 </resources>
