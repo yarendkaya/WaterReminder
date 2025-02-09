@@ -7,13 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.yarendemirkaya.waterreminder.navigation.BottomNavigationBar
 import com.yarendemirkaya.waterreminder.navigation.Navigation
-import com.yarendemirkaya.waterreminder.ui.theme.WaterReminderTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,9 +19,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                val navController = rememberNavController()
-                Navigation(navController = navController,)
+            val navController = rememberNavController()
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                bottomBar = {
+                        BottomNavigationBar(navController = navController,)
+                }
+            ) { paddingValues ->
+                Navigation(navController = navController)
             }
         }
     }
