@@ -17,6 +17,7 @@ import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
+import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
 
 
 @Composable
@@ -25,7 +26,6 @@ fun Navigation(navController: NavHostController) {
         navController = navController,
         startDestination = "login"
     ) {
-
         composable("login") {
             val viewModel: LoginViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -37,20 +37,19 @@ fun Navigation(navController: NavHostController) {
                         is LoginContract.LoginUiEffect.ShowToast -> {
                             Log.d("LoginViewModel", "ShowToast: ${effect.message}")
                         }
+
                         is LoginContract.LoginUiEffect.GoToHomeScreen -> {
-                            navController.navigate("home"){
+                            navController.navigate("home") {
                                 popUpTo("login") { inclusive = true }
                             }
                         }
+
                         is LoginContract.LoginUiEffect.GoToRegisterScreen -> {
                             navController.navigate("register")
                         }
-                        else -> {}
                     }
                 }
             }
-
-
             LoginScreen(
                 uiState = uiState,
                 onAction = viewModel::onAction,
@@ -65,7 +64,7 @@ fun Navigation(navController: NavHostController) {
         }
 
         composable("register") {
-            val viewModel: LoginViewModel = hiltViewModel()
+            val viewModel: RegisterViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
             val lifecycleOwner = LocalLifecycleOwner.current

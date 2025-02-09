@@ -32,7 +32,6 @@ class LoginViewModel @Inject constructor(
     fun onAction(action: LoginContract.LoginUiAction) {
         when (action) {
             is LoginContract.LoginUiAction.SignInClicked -> signIn()
-            is LoginContract.LoginUiAction.SignUpClicked -> signUp()
 
             is LoginContract.LoginUiAction.EmailChanged -> {
                 _uiState.value = _uiState.value.copy(email = action.email)
@@ -44,20 +43,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
-    private fun signUp() = viewModelScope.launch {
-        when (val result = authRepository.signUp(uiState.value.email, uiState.value.password)) {
-            is Resource.Success -> {
-                emitUiEffect(LoginContract.LoginUiEffect.ShowToast(result.data))
-                emitUiEffect(LoginContract.LoginUiEffect.GoToHomeScreen)
-            }
-
-            is Resource.Error -> {
-                emitUiEffect(LoginContract.LoginUiEffect.ShowToast(result.message))
-            }
-        }
-    }
-
     private fun signIn() {
         viewModelScope.launch {
             when (val result = authRepository.signIn(uiState.value.email, uiState.value.password)) {
@@ -65,7 +50,6 @@ class LoginViewModel @Inject constructor(
                     emitUiEffect(LoginContract.LoginUiEffect.ShowToast(result.data))
                     emitUiEffect(LoginContract.LoginUiEffect.GoToHomeScreen)
                 }
-
                 is Resource.Error -> {
                     emitUiEffect(LoginContract.LoginUiEffect.ShowToast(result.message))
                 }
