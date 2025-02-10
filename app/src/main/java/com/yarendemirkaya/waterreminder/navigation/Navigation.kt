@@ -16,6 +16,8 @@ import com.yarendemirkaya.waterreminder.presentation.home.HomeScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
+import com.yarendemirkaya.waterreminder.presentation.profile.ProfileSetupScreen
+import com.yarendemirkaya.waterreminder.presentation.profile.ProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
 
@@ -61,6 +63,11 @@ fun Navigation(navController: NavHostController) {
 
         composable("home") {
             HomeScreen()
+        }
+
+        composable("profile") {
+            val viewModel: ProfileViewModel = hiltViewModel()
+            ProfileSetupScreen(viewModel = viewModel)
         }
 
         composable("register") {

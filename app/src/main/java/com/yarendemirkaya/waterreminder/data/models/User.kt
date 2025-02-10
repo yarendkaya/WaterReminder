@@ -1,4 +1,4 @@
-package com.yarendemirkaya.waterreminder.data.remote.user
+package com.yarendemirkaya.waterreminder.data.models
 
 data class User(
     val id: String = "", // Firebase Authentication UID

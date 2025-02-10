@@ -1,4 +1,4 @@
-package com.yarendemirkaya.waterreminder.data.remote.water
+package com.yarendemirkaya.waterreminder.data.models
 
 data class Water(
     val amount: Int = 0, // ml cinsinden alınan su miktarı

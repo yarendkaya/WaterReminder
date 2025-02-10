@@ -1,29 +1,15 @@
 package com.yarendemirkaya.waterreminder.data.repo
 
-import com.google.firebase.auth.FirebaseAuth
-import com.yarendemirkaya.waterreminder.common.Resource
-import kotlinx.coroutines.tasks.await
+import com.yarendemirkaya.waterreminder.data.datasource.AuthDataSource
 import javax.inject.Inject
 
-class AuthRepository @Inject constructor(private val auth: FirebaseAuth) {
+class AuthRepository @Inject constructor(private val auth: AuthDataSource) {
+    suspend fun login(email: String, password: String) = auth.signIn(email, password)
+    suspend fun register(email: String, password: String) = auth.signUp(email, password)
 
-    fun isUserLoggedIn(): Boolean = auth.currentUser != null
+    fun logOut() = auth.logOut()
+    fun isUserLoggedIn() = auth.isUserLoggedIn()
 
-    suspend fun signUp(email: String, password: String): Resource<String> {
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            Resource.Success(result.user?.uid.orEmpty())
-        } catch (e: Exception) {
-            Resource.Error(e.toString())
-        }
-    }
 
-    suspend fun signIn(email: String, password: String): Resource<String> {
-        return try {
-            val result = auth.signInWithEmailAndPassword(email, password).await()
-            Resource.Success(result.user?.uid.orEmpty())
-        } catch (e: Exception) {
-            Resource.Error(e.toString())
-        }
-    }
+
 }
