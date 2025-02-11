@@ -16,7 +16,8 @@ import com.yarendemirkaya.waterreminder.presentation.home.HomeScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
-import com.yarendemirkaya.waterreminder.presentation.profile.ProfileSetupScreen
+import com.yarendemirkaya.waterreminder.presentation.profile.ProfileEditScreen
+import com.yarendemirkaya.waterreminder.presentation.profile.ProfileScreen
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
@@ -67,7 +68,14 @@ fun Navigation(navController: NavHostController) {
 
         composable("profile") {
             val viewModel: ProfileViewModel = hiltViewModel()
-            ProfileSetupScreen(viewModel = viewModel)
+            ProfileScreen(viewModel=viewModel,navController = navController)
+        }
+
+        composable("editProfile") {
+            val viewModel: ProfileViewModel = hiltViewModel()
+            ProfileEditScreen(viewModel=viewModel,onProfileSaved = {
+                navController.popBackStack()
+            })
         }
 
         composable("register") {
