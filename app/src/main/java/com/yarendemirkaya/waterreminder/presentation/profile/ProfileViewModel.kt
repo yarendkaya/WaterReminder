@@ -96,15 +96,13 @@ class ProfileViewModel @Inject constructor(
         sleepTime: String
     ) {
 
-        val updatedUser = User(
-            name = name,
+        val updatedUser = User(name = name,
             height = height,
             weight = weight,
             age = age,
             gender = gender,
             dailyWaterGoal = dailyWaterGoal,
-            sleepTime = sleepTime
-        )
+            sleepTime = sleepTime)
 
         viewModelScope.launch {
             userRepo.saveUserData(updatedUser)

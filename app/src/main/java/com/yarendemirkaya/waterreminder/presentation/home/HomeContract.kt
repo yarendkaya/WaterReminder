@@ -12,7 +12,6 @@ object HomeContract {
 
     sealed class HomeUiAction {
         data class AddWaterIntake(val waterIntake: WaterIntake) : HomeUiAction()
-
     }
 
     sealed class HomeUiEffect {

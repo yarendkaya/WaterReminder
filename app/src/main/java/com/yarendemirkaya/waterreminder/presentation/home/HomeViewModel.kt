@@ -2,9 +2,9 @@ package com.yarendemirkaya.waterreminder.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
-import com.yarendemirkaya.waterreminder.presentation.profile.ProfileContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,8 +40,16 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
         }
     }
 
-    fun getWaterIntakes(userId: String) = waterRepository.getWaterIntakes(userId)
+    fun getWaterIntakes() {
+        viewModelScope.launch {
+            when (val waterIntakes = waterRepository.getWaterIntakes()) {
+                is Resource.Success<*> -> {
+                    _uiState.value = _uiState.value.copy(waterIntakes = waterIntakes.data as List<WaterIntake>)
+                }
+                else ->{
 
-    fun deleteWaterIntake(userId: String, waterIntakeId: String) =
-        waterRepository.deleteWaterIntake(userId, waterIntakeId)
+                }
+            }
+        }
+    }
 }

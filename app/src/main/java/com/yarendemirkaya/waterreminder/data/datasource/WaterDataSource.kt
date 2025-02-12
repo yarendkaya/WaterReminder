@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -15,12 +14,12 @@ class WaterDataSource @Inject constructor(private val fireStore: FirebaseFiresto
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private val userId = currentUser?.uid ?: ""
 
-    suspend fun addWaterIntake( waterIntake: WaterIntake) {
-        val waterIntakeRef = fireStore.collection("users")
-            .document(userId)
-            .collection("waterIntakes")
-            .document()
+    private val waterIntakeRef = fireStore.collection("users")
+        .document(userId)
+        .collection("waterIntakes")
+        .document()
 
+    suspend fun addWaterIntake(waterIntake: WaterIntake) {
         val waterIntakeData = mapOf(
             "amount" to waterIntake.amount,
             "time" to waterIntake.time
@@ -28,26 +27,20 @@ class WaterDataSource @Inject constructor(private val fireStore: FirebaseFiresto
         waterIntakeRef.set(waterIntakeData).await()
     }
 
-
-    fun getWaterIntakes(userId: String) = flow {
-        try {
-            val waterCollection =
-                fireStore.collection("users").document(userId).collection("waterIntake")
-            val waterIntakes = waterCollection.get().await().toObjects(WaterIntake::class.java)
-            emit(Resource.Success(waterIntakes))
+    suspend fun getWaterIntakes(): Resource<List<WaterIntake>> {
+        return try {
+            val waterIntakes = fireStore.collection("users")
+                .document(userId)
+                .collection("waterIntakes")
+                .get()
+                .await()
+                .toObjects(WaterIntake::class.java)
+            Resource.Success(waterIntakes)
         } catch (e: Exception) {
-            emit(Resource.Error("Su kayıtları getirilirken hata oluştu: ${e.message}"))
-        }
-    }
-
-    fun deleteWaterIntake(userId: String, waterIntakeId: String) = flow {
-        try {
-            val waterCollection =
-                fireStore.collection("users").document(userId).collection("waterIntake")
-            waterCollection.document(waterIntakeId).delete().await()
-            emit(Resource.Success("Su kaydı silindi"))
-        } catch (e: Exception) {
-            emit(Resource.Error("Su kaydı silinirken hata oluştu: ${e.message}"))
+            Resource.Error(e.message ?: "Error fetching water intakes")
         }
     }
 }
+
+
+

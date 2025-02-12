@@ -68,6 +68,10 @@ fun Navigation(navController: NavHostController) {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
             val lifecycleOwner = LocalLifecycleOwner.current
+
+            LaunchedEffect(Unit) {
+                viewModel.getWaterIntakes()
+            }
             HomeScreen(
                 uiState = uiState,
                 onAction = viewModel::onAction

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -88,9 +89,11 @@ fun HomeScreen(
                 .border(1.dp, Color.Gray)
                 .padding(8.dp)
         ) {
-            items(10) {
-                Text(text = "Item $it")
+            items(uiState.waterIntakes) { waterIntake ->
+                Text(text = waterIntake.amount.toString())
+                Text(text = waterIntake.time)
             }
+
         }
     }
 }
