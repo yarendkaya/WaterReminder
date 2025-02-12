@@ -26,8 +26,11 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel,navController: NavController) {
-    val userState by viewModel.userState.collectAsState()
+fun ProfileScreen(
+    uiState: ProfileContract.ProfileUiState,
+    onNavigateToEditProfileScreen: () -> Unit
+) {
+
 
     Scaffold(
         topBar = {
@@ -42,18 +45,17 @@ fun ProfileScreen(viewModel: ProfileViewModel,navController: NavController) {
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            userState?.let { user ->
+            uiState.let { user ->
                 Column(
-                    modifier = Modifier.run {
-                        fillMaxWidth()
-                            .padding(16.dp)
-                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     ProfileItem(label = "Ad", value = user.name)
                     ProfileItem(label = "Boy", value = "${user.height} cm")
                     ProfileItem(label = "Kilo", value = "${user.weight} kg")
-                    ProfileItem(label = "Yaş", value = "${user.age}")
+                    ProfileItem(label = "Yaş", value = user.age)
                     ProfileItem(label = "Cinsiyet", value = user.gender)
                     ProfileItem(label = "Günlük Su Hedefi", value = "${user.dailyWaterGoal} ml")
                     ProfileItem(label = "Uyku Saati", value = user.sleepTime)
@@ -62,7 +64,7 @@ fun ProfileScreen(viewModel: ProfileViewModel,navController: NavController) {
 
                     Button(
                         onClick = {
-                            navController.navigate("editProfile")
+                            onNavigateToEditProfileScreen()
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {

@@ -1,7 +1,6 @@
 package com.yarendemirkaya.waterreminder.data.models
 
 data class User(
-    val id: String = "", // Firebase Authentication UID
     val name: String = "",
     val height: Int = 0, // cm
     val weight: Int = 0, // kg

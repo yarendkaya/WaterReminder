@@ -12,9 +12,6 @@ import javax.inject.Inject
 
 class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestore, private val auth: FirebaseAuth) {
 
-    private val userCollectionRef = fireStore.collection("users")
-    private val userid = FirebaseAuth.getInstance().currentUser?.uid
-
 
     suspend fun saveUserInfo(user: User) {
         val currentUser = auth.currentUser

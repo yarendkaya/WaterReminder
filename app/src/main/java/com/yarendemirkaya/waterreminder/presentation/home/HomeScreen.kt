@@ -28,13 +28,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
+import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    uiState: HomeContract.HomeUiState,
+    onAction: (HomeContract.HomeUiAction) -> Unit
+) {
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,18 +62,32 @@ fun HomeScreen() {
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
-            ), onClick = {}) {
+            ), onClick = {
+                onAction(
+                    HomeContract.HomeUiAction.AddWaterIntake(
+                        WaterIntake(
+                            amount = 250,
+                            time = System.currentTimeMillis().toString()
+                        )
+                    )
+                )
+            }) {
                 Text(text = stringResource(id = R.string.add_water))
             }
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
-            ), onClick = {}) {
+            ), onClick = { }) {
                 Text(text = stringResource(id = R.string.add_icon))
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
-        LazyColumn(modifier = Modifier.fillMaxWidth().border(1.dp, Color.Gray).padding(8.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Gray)
+                .padding(8.dp)
+        ) {
             items(10) {
                 Text(text = "Item $it")
             }
@@ -78,5 +98,4 @@ fun HomeScreen() {
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
 }

@@ -6,8 +6,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.yarendemirkaya.waterreminder.data.models.User
 import com.yarendemirkaya.waterreminder.data.repo.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,10 +19,30 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepo: UserRepository,
 ) : ViewModel() {
+
     private val userid = FirebaseAuth.getInstance().currentUser?.uid
 
-    private val _userState = MutableStateFlow<User?>(null)
-    val userState: StateFlow<User?> = _userState.asStateFlow()
+
+    private val _uiState = MutableStateFlow(ProfileContract.ProfileUiState())
+    val uiState: StateFlow<ProfileContract.ProfileUiState> = _uiState.asStateFlow()
+
+    private val _uiEffect = MutableSharedFlow<ProfileContract.ProfileUiEffect>()
+    val uiEffect: SharedFlow<ProfileContract.ProfileUiEffect> = _uiEffect.asSharedFlow()
+
+    fun onAction(action: ProfileContract.ProfileUiAction) {
+        when (action) {
+            is ProfileContract.ProfileUiAction.SaveUserData -> saveUserData(action.user)
+            is ProfileContract.ProfileUiAction.UpdateUser -> updateUser(
+                action.name,
+                action.height,
+                action.weight,
+                action.age,
+                action.gender,
+                action.dailyWaterGoal,
+                action.sleepTime
+            )
+        }
+    }
 
     init {
         getUserData()
@@ -30,15 +53,25 @@ class ProfileViewModel @Inject constructor(
 
         viewModelScope.launch {
             userRepo.getUserData(userId).collect { user ->
-                _userState.value = user
+                if (user != null) {
+                    _uiState.value = _uiState.value.copy(
+                        name = user.name,
+                        height = user.height.toString(),
+                        weight = user.weight.toString(),
+                        age = user.age.toString(),
+                        gender = user.gender,
+                        dailyWaterGoal = user.dailyWaterGoal.toString(),
+                        sleepTime = user.sleepTime
+                    )
+                }
+                _uiEffect.emit(ProfileContract.ProfileUiEffect.NavigateToEdit)
             }
         }
     }
 
-    fun saveUserData(user: User) {
+    private fun saveUserData(user: User) {
         if (userid != null) {
             User(
-                id = userid,
                 name = user.name,
                 weight = user.weight,
                 height = user.height,
@@ -48,18 +81,22 @@ class ProfileViewModel @Inject constructor(
                 sleepTime = user.sleepTime,
             )
         }
-        val updatedUser = userid?.let { user.copy(id = it) }
-
         viewModelScope.launch {
-            userRepo.saveUserData(updatedUser!!)
+            userRepo.saveUserData(user)
         }
     }
 
-    fun updateUser(name: String, height: Int, weight: Int, age: Int, gender: String, dailyWaterGoal: Int, sleepTime: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    fun updateUser(
+        name: String,
+        height: Int,
+        weight: Int,
+        age: Int,
+        gender: String,
+        dailyWaterGoal: Int,
+        sleepTime: String
+    ) {
 
         val updatedUser = User(
-            id = userId,
             name = name,
             height = height,
             weight = weight,
@@ -73,5 +110,4 @@ class ProfileViewModel @Inject constructor(
             userRepo.saveUserData(updatedUser)
         }
     }
-
 }

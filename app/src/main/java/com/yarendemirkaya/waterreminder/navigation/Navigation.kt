@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.yarendemirkaya.waterreminder.presentation.home.HomeScreen
+import com.yarendemirkaya.waterreminder.presentation.home.HomeViewModel
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
@@ -63,19 +64,40 @@ fun Navigation(navController: NavHostController) {
         }
 
         composable("home") {
-            HomeScreen()
+            val viewModel: HomeViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiEffect = viewModel.uiEffect
+            val lifecycleOwner = LocalLifecycleOwner.current
+            HomeScreen(
+                uiState = uiState,
+                onAction = viewModel::onAction
+            )
         }
 
         composable("profile") {
             val viewModel: ProfileViewModel = hiltViewModel()
-            ProfileScreen(viewModel=viewModel,navController = navController)
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiEffect = viewModel.uiEffect
+            val lifecycleOwner = LocalLifecycleOwner.current
+            ProfileScreen(
+                uiState = uiState,
+                onNavigateToEditProfileScreen = {
+                    navController.navigate("editProfile")
+                }
+            )
         }
 
         composable("editProfile") {
             val viewModel: ProfileViewModel = hiltViewModel()
-            ProfileEditScreen(viewModel=viewModel,onProfileSaved = {
-                navController.popBackStack()
-            })
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val uiEffect = viewModel.uiEffect
+            val lifecycleOwner = LocalLifecycleOwner.current
+            ProfileEditScreen(
+                viewModel = viewModel,
+                uiState = uiState,
+                uiEffect = uiEffect,
+                onAction = viewModel::onAction
+            )
         }
 
         composable("register") {

@@ -18,13 +18,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun ProfileEditScreen(
     viewModel: ProfileViewModel,
-    onProfileSaved: () -> Unit // Kaydedildikten sonra geri dönmek için callback
+    uiState: ProfileContract.ProfileUiState,
+    uiEffect: SharedFlow<ProfileContract.ProfileUiEffect>,
+    onAction: (ProfileContract.ProfileUiAction) -> Unit, // Kaydedildikten sonra geri dönmek için callback
 ) {
-    val userState by viewModel.userState.collectAsState()
 
     var name by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
@@ -34,17 +36,19 @@ fun ProfileEditScreen(
     var dailyWaterGoal by remember { mutableStateOf("") }
     var sleepTime by remember { mutableStateOf("") }
 
-    LaunchedEffect(userState) {
-        userState?.let { user ->
-            name = user.name
-            height = user.height.toString()
-            weight = user.weight.toString()
-            age = user.age.toString()
-            gender = user.gender
-            dailyWaterGoal = user.dailyWaterGoal.toString()
-            sleepTime = user.sleepTime
-        }
-    }
+
+
+//    LaunchedEffect(userState) {
+//        userState?.let { user ->
+//            name = user.name
+//            height = user.height.toString()
+//            weight = user.weight.toString()
+//            age = user.age.toString()
+//            gender = user.gender
+//            dailyWaterGoal = user.dailyWaterGoal.toString()
+//            sleepTime = user.sleepTime
+//        }
+//    }
 
     Scaffold() { paddingValues ->
         Column(
@@ -88,7 +92,17 @@ fun ProfileEditScreen(
                         dailyWaterGoal = dailyWaterGoal.toInt(),
                         sleepTime = sleepTime,
                     )
-                    onProfileSaved()
+                    onAction(
+                        ProfileContract.ProfileUiAction.UpdateUser(
+                            name = name,
+                            height = height.toInt(),
+                            weight = weight.toInt(),
+                            age = age.toInt(),
+                            gender = gender,
+                            dailyWaterGoal = dailyWaterGoal.toInt(),
+                            sleepTime = sleepTime,
+                        )
+                    )
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
