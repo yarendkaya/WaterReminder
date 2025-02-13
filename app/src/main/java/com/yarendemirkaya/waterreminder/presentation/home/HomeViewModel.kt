@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
                 is Resource.Success -> {
                     val updatedWaterIntakes = waterIntakes.data.map {
                         it.copy(
-                            time = it.time.toLong().toFormattedDate("dd/MM/yyyy")
+                            time = it.time?.toLongOrNull()?.toFormattedDate("dd/MM/yyyy")
                         )
                     }
                     _uiState.value = _uiState.value.copy(waterIntakes = updatedWaterIntakes)

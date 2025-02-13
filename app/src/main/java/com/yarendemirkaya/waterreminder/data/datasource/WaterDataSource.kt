@@ -3,7 +3,7 @@ package com.yarendemirkaya.waterreminder.data.datasource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yarendemirkaya.waterreminder.common.Resource
-import com.yarendemirkaya.waterreminder.common.toFormattedDate
+
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

@@ -91,7 +91,7 @@ fun HomeScreen(
         ) {
             items(uiState.waterIntakes) { waterIntake ->
                 Text(text = waterIntake.amount.toString())
-                Text(text = waterIntake.time)
+                Text(text = waterIntake.time.orEmpty())
             }
 
         }
