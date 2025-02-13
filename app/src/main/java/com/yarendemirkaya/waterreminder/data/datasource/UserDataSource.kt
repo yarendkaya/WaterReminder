@@ -12,7 +12,6 @@ import javax.inject.Inject
 
 class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestore, private val auth: FirebaseAuth) {
 
-
     suspend fun saveUserInfo(user: User) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
@@ -23,8 +22,6 @@ class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestor
             }
         }
     }
-
-
 
     fun getUserData(userId: String): Flow<User?> = callbackFlow {
         val docRef = fireStore.collection("users").document(userId)
@@ -39,7 +36,4 @@ class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestor
         }
         awaitClose { listener.remove() }
     }
-
-
-
 }

@@ -3,6 +3,7 @@ package com.yarendemirkaya.waterreminder.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yarendemirkaya.waterreminder.common.Resource
+import com.yarendemirkaya.waterreminder.common.toFormattedDate
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
         viewModelScope.launch {
             waterRepository.addWaterIntake(water)
         }
+        getWaterIntakes()
     }
 
     fun onAction(action: HomeContract.HomeUiAction) {
@@ -43,11 +45,16 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
     fun getWaterIntakes() {
         viewModelScope.launch {
             when (val waterIntakes = waterRepository.getWaterIntakes()) {
-                is Resource.Success<*> -> {
-                    _uiState.value = _uiState.value.copy(waterIntakes = waterIntakes.data as List<WaterIntake>)
+                is Resource.Success -> {
+                    val updatedWaterIntakes = waterIntakes.data.map {
+                        it.copy(
+                            time = it.time.toLong().toFormattedDate("dd/MM/yyyy")
+                        )
+                    }
+                    _uiState.value = _uiState.value.copy(waterIntakes = updatedWaterIntakes)
                 }
-                else ->{
-
+                is Resource.Error -> {
+                    _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(waterIntakes.message))
                 }
             }
         }

@@ -9,7 +9,4 @@ class AuthRepository @Inject constructor(private val auth: AuthDataSource) {
 
     fun logOut() = auth.logOut()
     fun isUserLoggedIn() = auth.isUserLoggedIn()
-
-
-
 }
