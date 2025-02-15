@@ -75,14 +75,14 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
-    ksp(libs.hilt.android.compiler)
     ksp(libs.hilt.navigation.compose)
 
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore.ktx)
 
-
+    implementation(libs.gson)
 
 
 }

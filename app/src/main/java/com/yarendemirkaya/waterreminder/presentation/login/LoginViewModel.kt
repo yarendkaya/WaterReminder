@@ -45,11 +45,13 @@ class LoginViewModel @Inject constructor(
 
     private fun signIn() {
         viewModelScope.launch {
-            when (val result = authRepository.signIn(uiState.value.email, uiState.value.password)) {
+            when (val result =
+                authRepository.login(_uiState.value.email, _uiState.value.password)) {
                 is Resource.Success -> {
                     emitUiEffect(LoginContract.LoginUiEffect.ShowToast(result.data))
                     emitUiEffect(LoginContract.LoginUiEffect.GoToHomeScreen)
                 }
+
                 is Resource.Error -> {
                     emitUiEffect(LoginContract.LoginUiEffect.ShowToast(result.message))
                 }
@@ -57,11 +59,11 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+
+
     private fun isUserLoggedIn() = viewModelScope.launch {
         if (authRepository.isUserLoggedIn()) {
             emitUiEffect(LoginContract.LoginUiEffect.GoToHomeScreen)
-        } else {
-            //navigate to login screen
         }
     }
 

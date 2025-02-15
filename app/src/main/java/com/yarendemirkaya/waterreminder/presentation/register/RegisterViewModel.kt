@@ -38,7 +38,7 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun signUp() = viewModelScope.launch {
-        when (val result = authRepository.signUp(uiState.value.email, uiState.value.password)) {
+        when (val result = authRepository.register(_uiState.value.email, _uiState.value.password)) {
             is Resource.Success -> {
                 emitUiEffect(RegisterContract.RegisterUiEffect.ShowToast(result.data))
                 emitUiEffect(RegisterContract.RegisterUiEffect.GoToHomeScreen)

@@ -12,11 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,13 +33,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
+import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    uiState: HomeContract.HomeUiState,
+    onAction: (HomeContract.HomeUiAction) -> Unit
+) {
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,20 +67,72 @@ fun HomeScreen() {
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
-            ), onClick = {}) {
+            ), onClick = {
+                onAction(
+                    HomeContract.HomeUiAction.OnClickAddWaterIntake(
+                        WaterIntake(
+                            time = System.currentTimeMillis().toString()
+                        )
+                    )
+                )
+            }) {
                 Text(text = stringResource(id = R.string.add_water))
+            }
+            if (uiState.isDialogOpen) {
+                AddWaterDialog(onAction = onAction)
             }
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
-            ), onClick = {}) {
+            ), onClick = {
+                onAction(HomeContract.HomeUiAction.OnClickOpenDialog)
+            }) {
                 Text(text = stringResource(id = R.string.add_icon))
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
-        LazyColumn(modifier = Modifier.fillMaxWidth().border(1.dp, Color.Gray).padding(8.dp)) {
-            items(10) {
-                Text(text = "Item $it")
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Gray)
+                .padding(8.dp)
+        ) {
+            items(uiState.waterIntakes) { waterIntake ->
+                Text(text = waterIntake.amount.toString())
+                Text(text = waterIntake.time.orEmpty())
+            }
+        }
+    }
+}
+
+@Composable
+fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
+    Column {
+        var amount by remember { mutableStateOf("") }
+        TextField(
+            value = amount,
+            onValueChange = {
+                amount = it
+            },
+            label = { Text(text = "Amount") }
+        )
+        Row() {
+            Button(onClick = {
+                onAction(
+                    HomeContract.HomeUiAction.OnClickAddWaterIntake(
+                        WaterIntake(
+                            amount = amount.toInt(),
+                            time = System.currentTimeMillis().toString()
+                        )
+                    )
+                )
+            }) {
+                Text(text = "Add")
+            }
+            Button(onClick = {
+                onAction(HomeContract.HomeUiAction.OnClickCloseDialog)
+            }) {
+                Text(text = "Close")
             }
         }
     }
@@ -78,5 +141,4 @@ fun HomeScreen() {
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
 }
