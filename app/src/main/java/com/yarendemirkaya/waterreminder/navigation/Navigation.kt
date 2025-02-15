@@ -1,5 +1,6 @@
 package com.yarendemirkaya.waterreminder.navigation
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,14 +11,19 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.google.gson.Gson
+import com.yarendemirkaya.waterreminder.data.models.User
+import com.yarendemirkaya.waterreminder.presentation.editprofile.EditProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.home.HomeScreen
 import com.yarendemirkaya.waterreminder.presentation.home.HomeViewModel
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
-import com.yarendemirkaya.waterreminder.presentation.profile.ProfileEditScreen
+import com.yarendemirkaya.waterreminder.presentation.editprofile.ProfileEditScreen
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileScreen
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
@@ -72,11 +78,13 @@ fun Navigation(navController: NavHostController) {
             LaunchedEffect(Unit) {
                 viewModel.getWaterIntakes()
             }
+
             HomeScreen(
                 uiState = uiState,
                 onAction = viewModel::onAction
             )
         }
+
 
         composable("profile") {
             val viewModel: ProfileViewModel = hiltViewModel()
@@ -85,22 +93,35 @@ fun Navigation(navController: NavHostController) {
             val lifecycleOwner = LocalLifecycleOwner.current
             ProfileScreen(
                 uiState = uiState,
-                onNavigateToEditProfileScreen = {
-                    navController.navigate("editProfile")
-                }
+                onNavigateToEditProfileScreen = { user ->
+                    val userJson = Uri.encode(Gson().toJson(user))
+                    navController.navigate("editProfile/$userJson")
+                },
+                onAction = viewModel::onAction,
+                uiEffect = uiEffect,
             )
         }
 
-        composable("editProfile") {
-            val viewModel: ProfileViewModel = hiltViewModel()
+        composable(
+            route = "editProfile/{user}",
+            arguments = listOf(navArgument("user") { type = NavType.StringType })
+        ) { backStackEntry ->
+
+            val userJson = backStackEntry.arguments?.getString("user")
+            val user = Gson().fromJson(userJson, User::class.java)
+
+            val viewModel: EditProfileViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
             val lifecycleOwner = LocalLifecycleOwner.current
+
             ProfileEditScreen(
-                viewModel = viewModel,
-                uiState = uiState,
                 uiEffect = uiEffect,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
+                onNavigateToProfileScreen = {
+                    navController.navigate("profile")
+                },
+                user = user
             )
         }
 

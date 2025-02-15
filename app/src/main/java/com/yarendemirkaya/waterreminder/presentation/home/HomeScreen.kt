@@ -17,7 +17,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,9 +69,8 @@ fun HomeScreen(
                 contentColor = Color.White
             ), onClick = {
                 onAction(
-                    HomeContract.HomeUiAction.AddWaterIntake(
+                    HomeContract.HomeUiAction.OnClickAddWaterIntake(
                         WaterIntake(
-                            amount = 250,
                             time = System.currentTimeMillis().toString()
                         )
                     )
@@ -75,10 +78,15 @@ fun HomeScreen(
             }) {
                 Text(text = stringResource(id = R.string.add_water))
             }
+            if (uiState.isDialogOpen) {
+                AddWaterDialog(onAction = onAction)
+            }
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
-            ), onClick = { }) {
+            ), onClick = {
+                onAction(HomeContract.HomeUiAction.OnClickOpenDialog)
+            }) {
                 Text(text = stringResource(id = R.string.add_icon))
             }
         }
@@ -93,7 +101,39 @@ fun HomeScreen(
                 Text(text = waterIntake.amount.toString())
                 Text(text = waterIntake.time.orEmpty())
             }
+        }
+    }
+}
 
+@Composable
+fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
+    Column {
+        var amount by remember { mutableStateOf("") }
+        TextField(
+            value = amount,
+            onValueChange = {
+                amount = it
+            },
+            label = { Text(text = "Amount") }
+        )
+        Row() {
+            Button(onClick = {
+                onAction(
+                    HomeContract.HomeUiAction.OnClickAddWaterIntake(
+                        WaterIntake(
+                            amount = amount.toInt(),
+                            time = System.currentTimeMillis().toString()
+                        )
+                    )
+                )
+            }) {
+                Text(text = "Add")
+            }
+            Button(onClick = {
+                onAction(HomeContract.HomeUiAction.OnClickCloseDialog)
+            }) {
+                Text(text = "Close")
+            }
         }
     }
 }

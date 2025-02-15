@@ -8,10 +8,13 @@ object HomeContract {
         val isLoggedIn: Boolean = false,
         val waterIntakes: List<WaterIntake> = emptyList(),
         val waterIntake: WaterIntake? = null,
+        val isDialogOpen: Boolean = false
     )
 
     sealed class HomeUiAction {
-        data class AddWaterIntake(val waterIntake: WaterIntake) : HomeUiAction()
+        data class OnClickAddWaterIntake(val waterIntake: WaterIntake) : HomeUiAction()
+        data object OnClickOpenDialog : HomeUiAction()
+        data object OnClickCloseDialog : HomeUiAction()
     }
 
     sealed class HomeUiEffect {

@@ -37,7 +37,13 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
     fun onAction(action: HomeContract.HomeUiAction) {
         viewModelScope.launch {
             when (action) {
-                is HomeContract.HomeUiAction.AddWaterIntake -> addWaterIntake(action.waterIntake)
+                is HomeContract.HomeUiAction.OnClickAddWaterIntake -> addWaterIntake(action.waterIntake)
+                is HomeContract.HomeUiAction.OnClickOpenDialog -> _uiState.value =
+                    _uiState.value.copy(isDialogOpen = true)
+
+                is HomeContract.HomeUiAction.OnClickCloseDialog -> _uiState.value =
+                    _uiState.value.copy(isDialogOpen = false)
+
             }
         }
     }
@@ -53,6 +59,7 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
                     }
                     _uiState.value = _uiState.value.copy(waterIntakes = updatedWaterIntakes)
                 }
+
                 is Resource.Error -> {
                     _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(waterIntakes.message))
                 }
