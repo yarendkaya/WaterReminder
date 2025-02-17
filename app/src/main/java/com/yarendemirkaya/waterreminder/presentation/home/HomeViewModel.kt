@@ -1,7 +1,9 @@
 package com.yarendemirkaya.waterreminder.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yarendemirkaya.waterreminder.common.DataStoreHelper
 import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.common.toFormattedDate
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
@@ -13,12 +15,21 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val waterRepository: WaterRepository) :
-    ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val waterRepository: WaterRepository,
+    private val dataStoreHelper: DataStoreHelper
+) : ViewModel() {
+
+    init {
+        Log.d("HomeViewModel", "HomeViewModel Created")
+        checkFirstLogin()
+    }
 
     private val _uiState = MutableStateFlow(HomeContract.HomeUiState())
     val uiState: StateFlow<HomeContract.HomeUiState> = _uiState.asStateFlow()
@@ -38,12 +49,35 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
         viewModelScope.launch {
             when (action) {
                 is HomeContract.HomeUiAction.OnClickAddWaterIntake -> addWaterIntake(action.waterIntake)
-                is HomeContract.HomeUiAction.OnClickOpenDialog -> _uiState.value =
-                    _uiState.value.copy(isDialogOpen = true)
+                is HomeContract.HomeUiAction.OnClickOpenDialog -> _uiState.update {
+                    it.copy(isDialogOpen = true)
+                }
 
-                is HomeContract.HomeUiAction.OnClickCloseDialog -> _uiState.value =
-                    _uiState.value.copy(isDialogOpen = false)
+                is HomeContract.HomeUiAction.OnClickCloseDialog -> _uiState.update {
+                    it.copy(isDialogOpen = false)
+                }
 
+                is HomeContract.HomeUiAction.CheckFirstLogin -> {
+                    dataStoreHelper.isFirstLogin.collect { firstLogin ->
+                        _uiState.update {
+                            it.copy(
+                                isFirstLogin = firstLogin,
+                                showBottomSheet = firstLogin
+                            )
+                        }
+                    }
+                }
+
+                is HomeContract.HomeUiAction.DismissBottomSheet -> {
+                    _uiState.update {
+                        it.copy(showBottomSheet = false)
+                    }
+                }
+
+                is HomeContract.HomeUiAction.EditProfileClicked -> {
+                    _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToEditProfile)
+                    viewModelScope.launch { dataStoreHelper.setFirstLoginDone() }
+                }
             }
         }
     }
@@ -62,6 +96,16 @@ class HomeViewModel @Inject constructor(private val waterRepository: WaterReposi
 
                 is Resource.Error -> {
                     _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(waterIntakes.message))
+                }
+            }
+        }
+    }
+
+    private fun checkFirstLogin() {
+        viewModelScope.launch {
+            dataStoreHelper.isFirstLogin.collectLatest {
+                _uiState.update {
+                    it.copy(isFirstLogin = it.isFirstLogin)
                 }
             }
         }

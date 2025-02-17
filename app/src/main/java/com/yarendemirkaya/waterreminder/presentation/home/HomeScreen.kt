@@ -15,13 +15,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,12 +38,37 @@ import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: HomeContract.HomeUiState,
     onAction: (HomeContract.HomeUiAction) -> Unit
 ) {
 
+    if (uiState.showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { onAction(HomeContract.HomeUiAction.DismissBottomSheet) },
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = Color.White,
+            contentColor = Color.Black,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Hoş Geldiniz! Profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
+                Spacer(modifier = Modifier.height(10.dp))
+                Button(onClick = {
+                    onAction(HomeContract.HomeUiAction.EditProfileClicked)
+                }) {
+                    Text("Profili Düzenle")
+                }
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +91,10 @@ fun HomeScreen(
             )
         }
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
@@ -116,7 +147,7 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
             },
             label = { Text(text = "Amount") }
         )
-        Row() {
+        Row {
             Button(onClick = {
                 onAction(
                     HomeContract.HomeUiAction.OnClickAddWaterIntake(

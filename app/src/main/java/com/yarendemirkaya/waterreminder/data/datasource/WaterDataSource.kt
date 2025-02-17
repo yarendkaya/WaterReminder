@@ -12,7 +12,7 @@ import javax.inject.Inject
 class WaterDataSource @Inject constructor(private val fireStore: FirebaseFirestore) {
 
     private val currentUser = FirebaseAuth.getInstance().currentUser
-    private val userId = currentUser?.uid ?: ""
+    private val userId = currentUser?.uid.orEmpty()
 
     private val waterIntakeRef = fireStore.collection("users")
         .document(userId)
