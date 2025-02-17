@@ -14,17 +14,23 @@ class WaterDataSource @Inject constructor(private val fireStore: FirebaseFiresto
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private val userId = currentUser?.uid.orEmpty()
 
-    private val waterIntakeRef = fireStore.collection("users")
-        .document(userId)
-        .collection("waterIntakes")
-        .document()
+    private val waterIntakeRef by lazy {
+        if (userId.isEmpty()) {
+            null
+        } else {
+            fireStore.collection("users")
+                .document(userId)
+                .collection("waterIntakes")
+                .document()
+        }
+    }
 
     suspend fun addWaterIntake(waterIntake: WaterIntake) {
         val waterIntakeData = mapOf(
             "amount" to waterIntake.amount,
             "time" to waterIntake.time
         )
-        waterIntakeRef.set(waterIntakeData).await()
+        waterIntakeRef?.set(waterIntakeData)?.await()
     }
 
     suspend fun getWaterIntakes(): Resource<List<WaterIntake>> {
