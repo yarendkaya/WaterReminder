@@ -4,8 +4,8 @@ object RegisterContract {
 
     data class RegisterUiState(
         val isLoggedIn: Boolean = false,
-        val email: String = "",
-        val password: String = "",
+        val email: String = "testo48@test.com",
+        val password: String = "test123456",
     )
 
     sealed class RegisterUiAction {
