@@ -31,12 +31,11 @@ class HomeViewModel @Inject constructor(
 
     private val _uiEffect = MutableSharedFlow<HomeContract.HomeUiEffect>()
     val uiEffect: SharedFlow<HomeContract.HomeUiEffect> = _uiEffect.asSharedFlow()
+
     init {
         Log.d("HomeViewModel", "HomeViewModel Created")
         checkFirstLogin()
     }
-
-
 
     private fun addWaterIntake(water: WaterIntake) {
         viewModelScope.launch {
