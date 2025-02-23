@@ -8,7 +8,10 @@ import javax.inject.Inject
 class AuthDataSource @Inject constructor(
     private val auth: FirebaseAuth,
 ) {
-    fun isUserLoggedIn(): Boolean = auth.currentUser != null
+   suspend fun isUserLoggedIn(): Boolean{
+        return auth.currentUser != null
+
+    }
 
     suspend fun signUp(email: String, password: String): Resource<String> {
         return try {

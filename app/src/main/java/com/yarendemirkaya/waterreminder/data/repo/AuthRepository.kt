@@ -8,5 +8,5 @@ class AuthRepository @Inject constructor(private val auth: AuthDataSource) {
     suspend fun register(email: String, password: String) = auth.signUp(email, password)
 
     fun logOut() = auth.logOut()
-    fun isUserLoggedIn() = auth.isUserLoggedIn()
+    suspend fun isUserLoggedIn() = auth.isUserLoggedIn()
 }
