@@ -17,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(private val repository: UserRepository) :
     ViewModel() {
+
     private val _uiState =
         MutableStateFlow(EditProfileContract.EditProfileUiState(isLoggedIn = false, user = User()))
     val uiState: StateFlow<EditProfileContract.EditProfileUiState> = _uiState.asStateFlow()
