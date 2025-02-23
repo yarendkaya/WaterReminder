@@ -45,7 +45,6 @@ fun HomeScreen(
     uiState: HomeContract.HomeUiState,
     onAction: (HomeContract.HomeUiAction) -> Unit
 ) {
-
     if (uiState.showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { onAction(HomeContract.HomeUiAction.DismissBottomSheet) },

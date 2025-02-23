@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -102,9 +101,11 @@ class HomeViewModel @Inject constructor(
 
     private fun checkFirstLogin() {
         viewModelScope.launch {
-            dataStoreHelper.isFirstLogin.collectLatest {
+            dataStoreHelper.isFirstLogin.collect {
+                Log.d("HomeViewModel", "checkFirstLogin: $it")
                 _uiState.update {
-                    it.copy(isFirstLogin = it.isFirstLogin)
+                    it.copy(isFirstLogin = it.isFirstLogin,
+                        showBottomSheet = it.isFirstLogin)
                 }
             }
         }

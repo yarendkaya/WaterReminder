@@ -36,13 +36,14 @@ fun ProfileEditScreen(
             }
         }
     }
+
     var name by rememberSaveable { mutableStateOf("") }
     var age by rememberSaveable { mutableStateOf("") }
     var weight by rememberSaveable { mutableStateOf("") }
     var height by rememberSaveable { mutableStateOf("") }
     var gender by rememberSaveable { mutableStateOf("") }
     var goal by rememberSaveable { mutableStateOf("") }
-    var sleepTime by rememberSaveable { mutableStateOf("") }
+    val sleepTime by rememberSaveable { mutableStateOf("") }
 
     Scaffold { paddingValues ->
         Column(
@@ -100,8 +101,7 @@ fun ProfileEditScreen(
                     height = height.toInt(),
                     gender = gender,
                     dailyWaterGoal = goal.toInt(),
-                    sleepTime = sleepTime
-                )
+                    sleepTime = sleepTime )
                 onAction(EditProfileContract.EditProfileUiAction.OnClickSaveChanges(user))
             }) {
                 Text(text = "Update")
