@@ -7,5 +7,6 @@ data class User(
     val age: Int = 0,
     val gender: String = "",
     val dailyWaterGoal: Int = 0,
-    val sleepTime: String = ""
+    val sleepTime: String = "",
+    val isRegistered: Boolean = false
 )

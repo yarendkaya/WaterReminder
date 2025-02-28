@@ -17,6 +17,8 @@ import com.yarendemirkaya.waterreminder.presentation.editprofile.ProfileEditScre
 import com.yarendemirkaya.waterreminder.presentation.home.HomeContract
 import com.yarendemirkaya.waterreminder.presentation.home.HomeScreen
 import com.yarendemirkaya.waterreminder.presentation.home.HomeViewModel
+import com.yarendemirkaya.waterreminder.presentation.intro.IntroScreen
+import com.yarendemirkaya.waterreminder.presentation.intro.IntroViewModel
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
@@ -30,7 +32,7 @@ import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
 fun Navigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = "login"
+        startDestination = "intro"
     ) {
         composable("login") {
             val viewModel: LoginViewModel = hiltViewModel()
@@ -80,6 +82,7 @@ fun Navigation(navController: NavHostController) {
                             is HomeContract.HomeUiEffect.ShowToast -> {
                                 Log.d("HomeViewModel", "ShowToast: ${effect.message}")
                             }
+
                             is HomeContract.HomeUiEffect.NavigateToEditProfile -> {
                                 navController.navigate("editProfile")
                             }
@@ -162,6 +165,24 @@ fun Navigation(navController: NavHostController) {
                 },
                 uiState = uiState,
                 onAction = viewModel::onAction
+            )
+        }
+        composable("intro") {
+            val viewModel: IntroViewModel = hiltViewModel()
+            val uiEffect = viewModel.uiEffect
+
+            IntroScreen(
+                onAction = viewModel::onAction,
+                onNavigateToLoginScreen = {
+                    navController.navigate("login")
+                },
+                onNavigateToRegisterScreen = {
+                    navController.navigate("register")
+                },
+                uiEffect= uiEffect,
+                onNavigateToHomeScreen = {
+                    navController.navigate("home")
+                }
             )
         }
     }

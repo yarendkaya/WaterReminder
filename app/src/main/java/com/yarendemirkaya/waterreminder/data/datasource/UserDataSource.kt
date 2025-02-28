@@ -36,4 +36,23 @@ class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestor
         }
         awaitClose { listener.remove() }
     }
+
+//    fun updateProfileCompletionStatus(userId: String, onComplete: (Boolean) -> Unit) {
+//        fireStore.collection("users").document(userId)
+//            .update("isProfileCompleted", true)
+//            .addOnSuccessListener { onComplete(true) }
+//            .addOnFailureListener { onComplete(false) }
+//    }
+//
+//    fun checkProfileCompletion(userId: String, onResult: (Boolean) -> Unit) {
+//        fireStore.collection("users").document(userId)
+//            .get()
+//            .addOnSuccessListener { document ->
+//                val isCompleted = document.getBoolean("isProfileCompleted") ?: false
+//                onResult(isCompleted)
+//            }
+//            .addOnFailureListener {
+//                onResult(false)
+//            }
+//    }
 }
