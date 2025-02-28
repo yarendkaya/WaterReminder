@@ -1,12 +1,12 @@
 package com.yarendemirkaya.waterreminder.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yarendemirkaya.waterreminder.common.DataStoreHelper
 import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.common.toFormattedDate
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
+import com.yarendemirkaya.waterreminder.data.repo.UserRepository
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val waterRepository: WaterRepository,
+    private val userRepository: UserRepository,
     private val dataStoreHelper: DataStoreHelper
 ) : ViewModel() {
 
@@ -31,10 +32,10 @@ class HomeViewModel @Inject constructor(
     private val _uiEffect = MutableSharedFlow<HomeContract.HomeUiEffect>()
     val uiEffect: SharedFlow<HomeContract.HomeUiEffect> = _uiEffect.asSharedFlow()
 
-    init {
-        Log.d("HomeViewModel", "HomeViewModel Created")
-        checkFirstLogin()
-    }
+//    init {
+//        Log.d("HomeViewModel", "HomeViewModel Created")
+//        checkFirstLogin()
+//    }
 
     private fun addWaterIntake(water: WaterIntake) {
         viewModelScope.launch {
@@ -55,24 +56,24 @@ class HomeViewModel @Inject constructor(
                     it.copy(isDialogOpen = false)
                 }
 
-                is HomeContract.HomeUiAction.CheckFirstLogin -> {
-                    dataStoreHelper.isFirstLogin.collect { firstLogin ->
-                        _uiState.update {
-                            it.copy(
-                                isFirstLogin = firstLogin,
-                                showBottomSheet = firstLogin
-                            )
-                        }
-                    }
-                }
+//                is HomeContract.HomeUiAction.CheckFirstLogin -> {
+//                    dataStoreHelper.isFirstLogin.collect { firstLogin ->
+//                        _uiState.update {
+//                            it.copy(
+//                                isFirstLogin = firstLogin,
+//                                showBottomSheet = firstLogin
+//                            )
+//                        }
+//                    }
+//                }
 
-                is HomeContract.HomeUiAction.DismissBottomSheet -> {
-                    _uiState.update {
-                        it.copy(showBottomSheet = false)
-                    }
-                }
+//                is HomeContract.HomeUiAction.DismissBottomSheet -> {
+//                    _uiState.update {
+//                        it.copy(showBottomSheet = false)
+//                    }
+//                }
 
-                is HomeContract.HomeUiAction.EditProfileClicked -> {
+                is HomeContract.HomeUiAction.OnClickEditProfile -> {
                     _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToEditProfile)
                     viewModelScope.launch { dataStoreHelper.setFirstLoginDone() }
                 }
@@ -99,15 +100,31 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun checkFirstLogin() {
-        viewModelScope.launch {
-            dataStoreHelper.isFirstLogin.collect {
-                Log.d("HomeViewModel", "checkFirstLogin: $it")
-                _uiState.update {
-                    it.copy(isFirstLogin = it.isFirstLogin,
-                        showBottomSheet = it.isFirstLogin)
-                }
-            }
-        }
-    }
+//    private fun checkFirstLogin() {
+//        viewModelScope.launch {
+//            dataStoreHelper.isFirstLogin.collect {
+//                Log.d("HomeViewModel", "checkFirstLogin: $it")
+//                _uiState.update {
+//                    it.copy(
+//                        isFirstLogin = it.isFirstLogin,
+//                        showBottomSheet = it.isFirstLogin
+//                    )
+//                }
+//            }
+//        }
+//    }
+
+//    fun checkUserProfile(userId: String) {
+//        userRepository.checkProfileCompletion(userId) { isCompleted ->
+//            _uiState.value = _uiState.value.copy(isProfileCompleted = isCompleted)
+//        }
+//    }
+//
+//    fun updateProfileCompleted(userId: String) {
+//        userRepository.updateProfileCompletionStatus(userId) { isSuccess ->
+//            if (isSuccess) {
+//                _uiState.value = _uiState.value.copy(isProfileCompleted = true)
+//            }
+//        }
+//    }
 }

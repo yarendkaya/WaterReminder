@@ -10,16 +10,16 @@ object HomeContract {
         val waterIntake: WaterIntake= WaterIntake(),
         val isDialogOpen: Boolean = false,
         val isFirstLogin: Boolean = true,
-        val showBottomSheet: Boolean = false
+        val showBottomSheet: Boolean = false,
     )
 
     sealed class HomeUiAction {
         data class OnClickAddWaterIntake(val waterIntake: WaterIntake) : HomeUiAction()
         data object OnClickOpenDialog : HomeUiAction()
         data object OnClickCloseDialog : HomeUiAction()
-        data object CheckFirstLogin : HomeUiAction()
-        data object DismissBottomSheet : HomeUiAction()
-        data object EditProfileClicked : HomeUiAction()
+//        data object CheckFirstLogin : HomeUiAction()
+//        data object DismissBottomSheet : HomeUiAction()
+        data object OnClickEditProfile : HomeUiAction()
     }
 
     sealed class HomeUiEffect {

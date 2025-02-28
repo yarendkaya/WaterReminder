@@ -10,7 +10,6 @@ class AuthDataSource @Inject constructor(
 ) {
    suspend fun isUserLoggedIn(): Boolean{
         return auth.currentUser != null
-
     }
 
     suspend fun signUp(email: String, password: String): Resource<String> {
@@ -32,4 +31,6 @@ class AuthDataSource @Inject constructor(
     }
 
     fun logOut() = auth.signOut()
+
+
 }

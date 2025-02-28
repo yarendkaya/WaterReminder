@@ -20,9 +20,9 @@ class IntroViewModel @Inject constructor(private val authRepository: AuthReposit
     private val _uiEffect = MutableSharedFlow<IntroContract.IntroUiEffect>()
     val uiEffect: SharedFlow<IntroContract.IntroUiEffect> = _uiEffect.asSharedFlow()
 
-    init {
-        isUserLoggedIn()
-    }
+//    init {
+//        isUserLoggedIn()
+//    }
 
 
     fun onAction(action: IntroContract.IntroAction) {
@@ -39,11 +39,11 @@ class IntroViewModel @Inject constructor(private val authRepository: AuthReposit
         }
     }
 
-    private fun isUserLoggedIn() = viewModelScope.launch {
-        if (!authRepository.isUserLoggedIn()) {
-            emitUiEffect(IntroContract.IntroUiEffect.NavigateToHomeScreen)
-        }
-    }
+//    private fun isUserLoggedIn() = viewModelScope.launch {
+//        if (!authRepository.isUserLoggedIn()) {
+//            emitUiEffect(IntroContract.IntroUiEffect.NavigateToHomeScreen)
+//        }
+//    }
 
     private suspend fun emitUiEffect(introUiEffect: IntroContract.IntroUiEffect) {
         _uiEffect.emit(introUiEffect)

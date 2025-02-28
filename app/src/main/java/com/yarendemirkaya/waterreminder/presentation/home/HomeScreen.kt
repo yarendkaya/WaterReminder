@@ -15,9 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -39,35 +37,35 @@ import com.yarendemirkaya.waterreminder.R.color.app_color
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun HomeScreen(
     uiState: HomeContract.HomeUiState,
     onAction: (HomeContract.HomeUiAction) -> Unit
 ) {
-    if (uiState.showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { onAction(HomeContract.HomeUiAction.DismissBottomSheet) },
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = Color.White,
-            contentColor = Color.Black,
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Hoş Geldiniz! Profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
-                Spacer(modifier = Modifier.height(10.dp))
-                Button(onClick = {
-                    onAction(HomeContract.HomeUiAction.EditProfileClicked)
-                }) {
-                    Text("Profili Düzenle")
-                }
-            }
-        }
-    }
+//    if (!uiState.isProfileCompleted) {
+//        ModalBottomSheet(
+//            onDismissRequest = { onAction(HomeContract.HomeUiAction.DismissBottomSheet) },
+//            modifier = Modifier.fillMaxWidth(),
+//            containerColor = Color.White,
+//            contentColor = Color.Black,
+//        ) {
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text("Hoş Geldiniz! Profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
+//                Spacer(modifier = Modifier.height(10.dp))
+//                Button(onClick = {
+//                    onAction(HomeContract.HomeUiAction.EditProfileClicked)
+//                }) {
+//                    Text("Profili Düzenle")
+//                }
+//            }
+//        }
+//    }
     Column(
         modifier = Modifier
             .fillMaxSize()
