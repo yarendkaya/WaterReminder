@@ -10,7 +10,10 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
-class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestore, private val auth: FirebaseAuth) {
+class UserDataSource @Inject constructor(
+    private val fireStore: FirebaseFirestore,
+    private val auth: FirebaseAuth
+) {
 
     suspend fun saveUserInfo(user: User) {
         val currentUser = auth.currentUser
@@ -37,22 +40,18 @@ class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestor
         awaitClose { listener.remove() }
     }
 
-//    fun updateProfileCompletionStatus(userId: String, onComplete: (Boolean) -> Unit) {
-//        fireStore.collection("users").document(userId)
-//            .update("isProfileCompleted", true)
-//            .addOnSuccessListener { onComplete(true) }
-//            .addOnFailureListener { onComplete(false) }
-//    }
-//
-//    fun checkProfileCompletion(userId: String, onResult: (Boolean) -> Unit) {
-//        fireStore.collection("users").document(userId)
-//            .get()
-//            .addOnSuccessListener { document ->
-//                val isCompleted = document.getBoolean("isProfileCompleted") ?: false
-//                onResult(isCompleted)
-//            }
-//            .addOnFailureListener {
-//                onResult(false)
-//            }
-//    }
+
+    suspend fun checkUserHasData(userId: String): Boolean {
+        return try {
+            val document = fireStore.collection("isAddedInfo").document(userId).get().await()
+            if (document != null && document.exists()) {
+                document.toObject(Boolean::class.java) ?: false
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            println(e.localizedMessage ?: "Failed to check user data")
+            false
+        }
+    }
 }

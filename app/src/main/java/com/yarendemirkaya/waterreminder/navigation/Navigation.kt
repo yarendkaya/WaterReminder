@@ -26,13 +26,15 @@ import com.yarendemirkaya.waterreminder.presentation.profile.ProfileScreen
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
+import com.yarendemirkaya.waterreminder.presentation.splash.SplashScreen
+import com.yarendemirkaya.waterreminder.presentation.splash.SplashViewModel
 
 
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = "intro"
+        startDestination = "splash"
     ) {
         composable("login") {
             val viewModel: LoginViewModel = hiltViewModel()
@@ -90,22 +92,6 @@ fun Navigation(navController: NavHostController) {
                     }
                 }
             }
-
-//            LaunchedEffect(Unit) {
-//                viewModel.onAction(HomeContract.HomeUiAction.CheckFirstLogin)
-//                viewModel.getWaterIntakes()
-//                uiEffect.collect { effect ->
-//                    when (effect) {
-//                        is HomeContract.HomeUiEffect.ShowToast -> {
-//                            Log.d("HomeViewModel", "ShowToast: ${effect.message}")
-//                        }
-//
-//                        is HomeContract.HomeUiEffect.NavigateToEditProfile -> {
-//                            navController.navigate("editProfile")
-//                        }
-//                    }
-//                }
-//            }
 
             HomeScreen(
                 uiState = uiState,
@@ -179,7 +165,27 @@ fun Navigation(navController: NavHostController) {
                 onNavigateToRegisterScreen = {
                     navController.navigate("register")
                 },
-                uiEffect= uiEffect,
+                uiEffect = uiEffect,
+                onNavigateToHomeScreen = {
+                    navController.navigate("home")
+                }
+            )
+        }
+
+        composable("splash") {
+
+            val viewModel: SplashViewModel = hiltViewModel()
+            val uiEffect = viewModel.uiEffect
+
+            LaunchedEffect(uiEffect) {
+                viewModel.checkIsUserLoggedIn()
+            }
+
+            SplashScreen(
+                uiEffect = uiEffect,
+                onNavigateToIntroScreen = {
+                    navController.navigate("intro")
+                },
                 onNavigateToHomeScreen = {
                     navController.navigate("home")
                 }

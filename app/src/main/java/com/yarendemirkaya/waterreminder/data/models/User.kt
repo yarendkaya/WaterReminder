@@ -8,5 +8,5 @@ data class User(
     val gender: String = "",
     val dailyWaterGoal: Int = 0,
     val sleepTime: String = "",
-    val isRegistered: Boolean = false
+    val isAddedInfo:Boolean = false
 )

@@ -41,7 +41,7 @@ fun RegisterScreen(
 
         Button(onClick = {
             onAction(RegisterContract.RegisterUiAction.SignUpClicked)
-//           onNavigateToHomeScreen(RegisterContract.RegisterUiEffect.GoToHomeScreen)
+            onNavigateToHomeScreen(RegisterContract.RegisterUiEffect.GoToHomeScreen)
         }) {
             Text(text = "Register")
         }

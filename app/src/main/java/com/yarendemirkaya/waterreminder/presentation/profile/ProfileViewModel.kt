@@ -35,13 +35,13 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
     init {
         getUserData()
     }
 
     private fun getUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-
         viewModelScope.launch {
             userRepo.getUserData(userId).collect { user ->
                 if (user != null) {
@@ -53,5 +53,9 @@ class ProfileViewModel @Inject constructor(
                 _uiEffect.emit(ProfileContract.ProfileUiEffect.NavigateToEdit)
             }
         }
+    }
+
+    fun checkUserHasData(){
+
     }
 }

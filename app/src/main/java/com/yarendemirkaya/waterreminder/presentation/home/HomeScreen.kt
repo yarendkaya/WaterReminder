@@ -15,7 +15,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -37,15 +39,17 @@ import com.yarendemirkaya.waterreminder.R.color.app_color
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: HomeContract.HomeUiState,
-    onAction: (HomeContract.HomeUiAction) -> Unit
+    onAction: (HomeContract.HomeUiAction) -> Unit,
 ) {
-//    if (!uiState.isProfileCompleted) {
+//    if (!uiState.checkIsRegisteredBefore){
 //        ModalBottomSheet(
-//            onDismissRequest = { onAction(HomeContract.HomeUiAction.DismissBottomSheet) },
+//            onDismissRequest = {
+//
+//            },
 //            modifier = Modifier.fillMaxWidth(),
 //            containerColor = Color.White,
 //            contentColor = Color.Black,
@@ -59,13 +63,14 @@ fun HomeScreen(
 //                Text("Hoş Geldiniz! Profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
 //                Spacer(modifier = Modifier.height(10.dp))
 //                Button(onClick = {
-//                    onAction(HomeContract.HomeUiAction.EditProfileClicked)
+//                    onAction(HomeContract.HomeUiAction.OnClickEditProfile)
 //                }) {
 //                    Text("Profili Düzenle")
 //                }
 //            }
 //        }
 //    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -149,7 +154,7 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
                 onAction(
                     HomeContract.HomeUiAction.OnClickAddWaterIntake(
                         WaterIntake(
-                            amount = amount.toInt(),
+                            amount = amount.toIntOrNull() ?: 0,
                             time = System.currentTimeMillis().toString()
                         )
                     )
@@ -166,7 +171,11 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
     }
 }
 
+
+
+
 @Preview
 @Composable
 fun HomeScreenPreview() {
+
 }

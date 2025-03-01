@@ -10,13 +10,13 @@ class UserRepository @Inject constructor(private val userDataSource: UserDataSou
     suspend fun saveUserData(user: User) {
         userDataSource.saveUserInfo(user)
     }
+
     fun getUserData(userId: String): Flow<User?> {
         return userDataSource.getUserData(userId)
     }
-//    fun updateProfileCompletionStatus(userId: String, onComplete: (Boolean) -> Unit) {
-//        userDataSource.updateProfileCompletionStatus(userId, onComplete)
-//    }
-//    fun checkProfileCompletion(userId: String, onResult: (Boolean) -> Unit) {
-//        userDataSource.checkProfileCompletion(userId, onResult)
-//    }
+
+    suspend fun checkUserHasData(userId: String): Boolean {
+        return userDataSource.checkUserHasData(userId)
+    }
+
 }

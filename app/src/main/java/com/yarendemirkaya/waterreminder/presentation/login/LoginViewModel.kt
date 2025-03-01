@@ -25,9 +25,6 @@ class LoginViewModel @Inject constructor(
     private val _uiEffect = Channel<LoginContract.LoginUiEffect>()
     val uiEffect = _uiEffect.receiveAsFlow()
 
-    init {
-//        isUserLoggedIn()
-    }
 
     fun onAction(action: LoginContract.LoginUiAction) {
         when (action) {
@@ -58,16 +55,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-
-
-//    private fun isUserLoggedIn() = viewModelScope.launch {
-//        if (authRepository.isUserLoggedIn()) {
-//            emitUiEffect(LoginContract.LoginUiEffect.GoToHomeScreen)
-//        }
-//    }
-
-
 
     private suspend fun emitUiEffect(loginUiEffect: LoginContract.LoginUiEffect) {
         _uiEffect.send(loginUiEffect)

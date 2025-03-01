@@ -17,6 +17,7 @@ import javax.inject.Inject
 class RegisterViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(RegisterContract.RegisterUiState())
     val uiState: StateFlow<RegisterContract.RegisterUiState> = _uiState.asStateFlow()
 
