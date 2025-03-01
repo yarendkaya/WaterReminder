@@ -1,5 +1,6 @@
 package com.yarendemirkaya.waterreminder.data.repo
 
+import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.data.datasource.UserDataSource
 import com.yarendemirkaya.waterreminder.data.models.User
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,7 @@ class UserRepository @Inject constructor(private val userDataSource: UserDataSou
         return userDataSource.getUserData(userId)
     }
 
-    suspend fun checkUserHasData(userId: String): Boolean {
+    suspend fun checkUserHasData(userId: String): Resource<Boolean> {
         return userDataSource.checkUserHasData(userId)
     }
 

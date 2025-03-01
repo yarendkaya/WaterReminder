@@ -1,11 +1,12 @@
 package com.yarendemirkaya.waterreminder.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.common.toFormattedDate
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
+import com.yarendemirkaya.waterreminder.data.repo.UserRepository
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val waterRepository: WaterRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeContract.HomeUiState())
@@ -73,6 +75,34 @@ class HomeViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(waterIntakes.message))
+                }
+            }
+        }
+    }
+
+    internal fun checkUserHasData() {
+        var errorCounter = 0
+        viewModelScope.launch {
+            val userUid = FirebaseAuth.getInstance().currentUser?.uid
+            userUid?.let {
+                when (val result = userRepository.checkUserHasData(it)) {
+                    is Resource.Error -> {
+                        if (errorCounter < 3) {
+                            errorCounter++
+                            return@launch
+                        }
+                        _uiState.update { uiState ->
+                            uiState.copy(showBottomSheet = true)
+                        }
+                        errorCounter = 0
+                    }
+                    is Resource.Success -> {
+                        if (!result.data) {
+                            _uiState.update { uiState ->
+                                uiState.copy(showBottomSheet = true)
+                            }
+                        }
+                    }
                 }
             }
         }
