@@ -2,6 +2,7 @@ package com.yarendemirkaya.waterreminder.data.datasource
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.data.models.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -41,17 +42,17 @@ class UserDataSource @Inject constructor(
     }
 
 
-    suspend fun checkUserHasData(userId: String): Boolean {
+    suspend fun checkUserHasData(userId: String): Resource<Boolean> {
         return try {
-            val document = fireStore.collection("isAddedInfo").document(userId).get().await()
-            if (document != null && document.exists()) {
-                document.toObject(Boolean::class.java) ?: false
+            val result = fireStore.collection("isAddedInfo").document(userId).get().await()
+                .toObject(Boolean::class.java)
+            if (result != null) {
+                Resource.Success(result)
             } else {
-                false
+                Resource.Error("Error checking user data")
             }
         } catch (e: Exception) {
-            println(e.localizedMessage ?: "Failed to check user data")
-            false
+            Resource.Error("Error checking user data")
         }
     }
 }
