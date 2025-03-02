@@ -39,13 +39,14 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun signUp() = viewModelScope.launch {
-        val email = _uiState.value.email
-        val password = _uiState.value.password
 
-        if (email.isBlank() || password.isBlank()) {
-            emitUiEffect(RegisterContract.RegisterUiEffect.ShowToast("Email ve şifre boş olamaz"))
-            return@launch
-        }
+//        val email = _uiState.value.email
+//        val password = _uiState.value.password
+//
+//        if (email.isBlank() || password.isBlank()) {
+//            emitUiEffect(RegisterContract.RegisterUiEffect.ShowToast("Email ve şifre boş olamaz"))
+//            return@launch
+//        }
 
         when (val result = authRepository.register(_uiState.value.email, _uiState.value.password)) {
             is Resource.Success -> {

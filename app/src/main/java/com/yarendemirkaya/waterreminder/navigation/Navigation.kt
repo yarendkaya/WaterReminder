@@ -22,6 +22,7 @@ import com.yarendemirkaya.waterreminder.presentation.intro.IntroViewModel
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
+import com.yarendemirkaya.waterreminder.presentation.profile.ProfileContract
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileScreen
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
@@ -79,23 +80,17 @@ fun Navigation(navController: NavHostController) {
             LaunchedEffect(uiEffect, lifecycleOwner) {
                 lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.getWaterIntakes()
-                    uiEffect.collect { effect ->
-                        when (effect) {
-                            is HomeContract.HomeUiEffect.ShowToast -> {
-                                Log.d("HomeViewModel", "ShowToast: ${effect.message}")
-                            }
-
-                            is HomeContract.HomeUiEffect.NavigateToEditProfile -> {
-                                navController.navigate("editProfile")
-                            }
-                        }
-                    }
+                    viewModel.checkUserHasData()
                 }
             }
 
             HomeScreen(
                 uiState = uiState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
+                uiEffect = uiEffect,
+                onNavigateToEditProfileScreen = {
+                    navController.navigate("editProfile")
+                }
             )
         }
 
@@ -104,6 +99,18 @@ fun Navigation(navController: NavHostController) {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
             val lifecycleOwner = LocalLifecycleOwner.current
+
+            LaunchedEffect(uiEffect, lifecycleOwner) {
+                lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    uiEffect.collect { effect ->
+                        when (effect) {
+                            is ProfileContract.ProfileUiEffect.NavigateToEdit -> {
+                                navController.navigate("editProfile")
+                            }
+                        }
+                    }
+                }
+            }
             ProfileScreen(
                 uiState = uiState,
                 onNavigateToEditProfileScreen = {

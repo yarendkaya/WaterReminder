@@ -1,11 +1,13 @@
 package com.yarendemirkaya.waterreminder.presentation.home
 
-import android.util.Log
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.common.toFormattedDate
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
+import com.yarendemirkaya.waterreminder.data.repo.UserRepository
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val waterRepository: WaterRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeContract.HomeUiState())
@@ -42,6 +45,7 @@ class HomeViewModel @Inject constructor(
                 is HomeContract.HomeUiAction.OnClickCloseDialog -> _uiState.update {
                     it.copy(isDialogOpen = false)
                 }
+
                 is HomeContract.HomeUiAction.OnClickEditProfile -> {
                     _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToEditProfile)
                     viewModelScope.launch {
@@ -75,6 +79,35 @@ class HomeViewModel @Inject constructor(
                     _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(waterIntakes.message))
                 }
             }
+        }
+    }
+
+
+    internal fun checkUserHasData() {
+        viewModelScope.launch {
+            val userUid = FirebaseAuth.getInstance().currentUser?.uid
+            if (userUid != null) {
+                when (val result = userRepository.checkUserHasData(userUid)) {
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(isAddedInfo = result.data)
+                        if (!result.data) {
+                            _uiState.update {
+                                it.copy(showBottomSheet = true)
+                            }
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(result.message))
+                    }
+                }
+            }
+        }
+    }
+
+    fun setUserInfo(){
+        viewModelScope.launch {
+
         }
     }
 }

@@ -9,7 +9,8 @@ object HomeContract {
         val waterIntakes: List<WaterIntake> = emptyList(),
         val waterIntake: WaterIntake = WaterIntake(),
         val isDialogOpen: Boolean = false,
-        val showBottomSheet: Boolean = false,
+        var showBottomSheet: Boolean = false,
+        val isAddedInfo: Boolean = false
     )
 
     sealed class HomeUiAction {

@@ -36,40 +36,57 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
+import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
+import kotlinx.coroutines.flow.SharedFlow
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: HomeContract.HomeUiState,
+    uiEffect: SharedFlow<HomeContract.HomeUiEffect>,
     onAction: (HomeContract.HomeUiAction) -> Unit,
+    onNavigateToEditProfileScreen: () -> Unit
 ) {
-//    if (!uiState.checkIsRegisteredBefore){
-//        ModalBottomSheet(
-//            onDismissRequest = {
-//
-//            },
-//            modifier = Modifier.fillMaxWidth(),
-//            containerColor = Color.White,
-//            contentColor = Color.Black,
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text("Hoş Geldiniz! Profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
-//                Spacer(modifier = Modifier.height(10.dp))
-//                Button(onClick = {
-//                    onAction(HomeContract.HomeUiAction.OnClickEditProfile)
-//                }) {
-//                    Text("Profili Düzenle")
-//                }
-//            }
-//        }
-//    }
+
+    uiEffect.collectWithLifecycle {
+        when (it) {
+            is HomeContract.HomeUiEffect.NavigateToEditProfile -> {
+                onNavigateToEditProfileScreen()
+            }
+            is HomeContract.HomeUiEffect.ShowToast -> {}
+        }
+
+    }
+
+    if(uiState.showBottomSheet){
+        ModalBottomSheet(
+            onDismissRequest = {
+
+            },
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = Color.White,
+            contentColor = Color.Black,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Hoş Geldiniz! Profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
+                Spacer(modifier = Modifier.height(10.dp))
+                Button(onClick = {
+                    onAction(HomeContract.HomeUiAction.OnClickEditProfile)
+                }) {
+                    Text("Profili Düzenle")
+                }
+            }
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -138,6 +155,8 @@ fun HomeScreen(
     }
 }
 
+
+
 @Composable
 fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
     Column {
@@ -170,8 +189,6 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
         }
     }
 }
-
-
 
 
 @Preview

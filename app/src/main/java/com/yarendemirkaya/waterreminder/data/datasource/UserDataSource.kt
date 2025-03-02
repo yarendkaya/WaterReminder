@@ -2,6 +2,7 @@ package com.yarendemirkaya.waterreminder.data.datasource
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.data.models.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -15,11 +16,20 @@ class UserDataSource @Inject constructor(
     private val auth: FirebaseAuth
 ) {
 
+
     suspend fun saveUserInfo(user: User) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             try {
                 fireStore.collection("users").document(currentUser.uid).set(user).await()
+            } catch (e: Exception) {
+                println(e.localizedMessage ?: "Failed to save user info")
+            }
+
+            try {
+                fireStore.collection("isAddedInfo").document(currentUser.uid).set(
+                    mapOf("isAddedInfo" to true)
+                ).await()
             } catch (e: Exception) {
                 println(e.localizedMessage ?: "Failed to save user info")
             }
@@ -41,17 +51,17 @@ class UserDataSource @Inject constructor(
     }
 
 
-    suspend fun checkUserHasData(userId: String): Boolean {
+    suspend fun checkUserHasData(userId: String): Resource<Boolean> {
         return try {
-            val document = fireStore.collection("isAddedInfo").document(userId).get().await()
-            if (document != null && document.exists()) {
-                document.toObject(Boolean::class.java) ?: false
-            } else {
-                false
-            }
+            val result = fireStore.collection("isAddedInfo").document(userId).get().await()
+
+            val isAddedInfo = result.getBoolean("isAddedInfo")
+
+            Resource.Success(isAddedInfo ?: false)
         } catch (e: Exception) {
             println(e.localizedMessage ?: "Failed to check user data")
-            false
+            Resource.Error("Error checking user data")
         }
     }
+
 }

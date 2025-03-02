@@ -36,9 +36,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    init {
-        getUserData()
-    }
 
     private fun getUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -50,7 +47,6 @@ class ProfileViewModel @Inject constructor(
                         isLoggedIn = true
                     )
                 }
-                _uiEffect.emit(ProfileContract.ProfileUiEffect.NavigateToEdit)
             }
         }
     }
