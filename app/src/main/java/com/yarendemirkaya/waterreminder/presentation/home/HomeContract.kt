@@ -22,6 +22,6 @@ object HomeContract {
 
     sealed class HomeUiEffect {
         data class ShowToast(val message: String) : HomeUiEffect()
-        data object NavigateToEditProfile : HomeUiEffect()
+        data object NavigateToProfile : HomeUiEffect()
     }
 }

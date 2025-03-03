@@ -22,7 +22,6 @@ import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.User
 import kotlinx.coroutines.flow.SharedFlow
 
-
 @Composable
 fun ProfileScreen(
     uiState: ProfileContract.ProfileUiState,
@@ -34,7 +33,7 @@ fun ProfileScreen(
     uiEffect.collectWithLifecycle { effect ->
         when (effect) {
             is ProfileContract.ProfileUiEffect.NavigateToEdit -> {
-                onNavigateToEditProfileScreen(uiState.user)
+                onNavigateToEditProfileScreen(effect.user)
             }
         }
     }
@@ -52,34 +51,29 @@ fun ProfileScreen(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            uiState.let { uiState ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ProfileItem(label = "Ad", value = uiState.user.name)
+                ProfileItem(label = "Boy", value = "${uiState.user.height} cm")
+                ProfileItem(label = "Kilo", value = "${uiState.user.weight} kg")
+                ProfileItem(label = "Yaş", value = uiState.user.age.toString())
+                ProfileItem(label = "Cinsiyet", value = uiState.user.gender)
+                ProfileItem(label = "Günlük Su Hedefi", value = "${uiState.user.dailyWaterGoal} ml")
+                ProfileItem(label = "Uyku Saati", value = uiState.user.sleepTime)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        onAction(ProfileContract.ProfileUiAction.OnClickEdit(uiState.user))
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    ProfileItem(label = "Ad", value = uiState.user.name)
-                    ProfileItem(label = "Boy", value = "${uiState.user.height} cm")
-                    ProfileItem(label = "Kilo", value = "${uiState.user.weight} kg")
-                    ProfileItem(label = "Yaş", value = uiState.user.age.toString())
-                    ProfileItem(label = "Cinsiyet", value = uiState.user.gender)
-                    ProfileItem(
-                        label = "Günlük Su Hedefi",
-                        value = "${uiState.user.dailyWaterGoal} ml"
-                    )
-                    ProfileItem(label = "Uyku Saati", value = uiState.user.sleepTime)
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(
-                        onClick = {
-                            onAction(ProfileContract.ProfileUiAction.OnClickEdit(uiState.user))
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Bilgileri Düzenle")
-                    }
+                    Text("Bilgileri Düzenle")
                 }
             }
         }

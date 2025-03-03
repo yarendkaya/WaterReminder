@@ -42,19 +42,18 @@ import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import kotlinx.coroutines.flow.SharedFlow
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: HomeContract.HomeUiState,
     uiEffect: SharedFlow<HomeContract.HomeUiEffect>,
     onAction: (HomeContract.HomeUiAction) -> Unit,
-    onNavigateToEditProfileScreen: () -> Unit
+    onNavigateToProfileScreen: () -> Unit
 ) {
 
     uiEffect.collectWithLifecycle {
         when (it) {
-            is HomeContract.HomeUiEffect.NavigateToEditProfile -> {
-                onNavigateToEditProfileScreen()
+            is HomeContract.HomeUiEffect.NavigateToProfile -> {
+                onNavigateToProfileScreen()
             }
 
             is HomeContract.HomeUiEffect.ShowToast -> {}

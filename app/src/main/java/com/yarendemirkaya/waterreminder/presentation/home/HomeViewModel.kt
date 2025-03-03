@@ -47,7 +47,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 is HomeContract.HomeUiAction.OnClickEditProfile -> {
-                    _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToEditProfile)
+                    _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToProfile)
                     viewModelScope.launch {
 
                     }

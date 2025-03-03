@@ -16,17 +16,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.unit.dp
 import com.yarendemirkaya.waterreminder.data.models.User
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun ProfileEditScreen(
+    user: User,
     uiEffect: SharedFlow<EditProfileContract.EditProfileUiEffect>,
     onNavigateToProfileScreen: () -> Unit,
     onAction: (EditProfileContract.EditProfileUiAction) -> Unit,
 ) {
-
     LaunchedEffect(uiEffect) {
         uiEffect.collect { effect ->
             when (effect) {
@@ -43,7 +44,7 @@ fun ProfileEditScreen(
     var height by rememberSaveable { mutableStateOf("") }
     var gender by rememberSaveable { mutableStateOf("") }
     var goal by rememberSaveable { mutableStateOf("") }
-    val sleepTime by rememberSaveable { mutableStateOf("") }
+    var sleepTime by rememberSaveable { mutableStateOf("") }
 
     Scaffold { paddingValues ->
         Column(
@@ -54,54 +55,75 @@ fun ProfileEditScreen(
         )
         {
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
+                value = user.name,
+                onValueChange = {
+                    name = it
+                },
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = age,
-                onValueChange = { age = it },
+                value = user.age.toString(),
+                onValueChange = {
+                    age = it
+                },
                 label = { Text("Age") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = weight,
-                onValueChange = { weight = it },
+                value = user.weight.toString(),
+                onValueChange = {
+                    weight = it
+                },
                 label = { Text("Weight") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
-                value = height,
-                onValueChange = { height = it },
+                value = user.height.toString(),
+                onValueChange = {
+                    height = it
+                },
                 label = { Text("Height") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
-                value = gender,
-                onValueChange = { gender = it },
+                value = user.gender,
+                onValueChange = {
+                    gender = it
+                },
                 label = { Text("Gender") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
-                value = goal,
-                onValueChange = { goal = it },
+                value = user.dailyWaterGoal.toString(),
+                onValueChange = {
+                    goal = it
+                },
                 label = { Text("Goal") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = user.sleepTime,
+                onValueChange = {
+                    sleepTime = it
+                },
+                label = { Text("Sleep Time") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Button(onClick = {
                 val user = User(
-                    name = name,
-                    age = age.toInt(),
-                    weight = weight.toInt(),
-                    height = height.toInt(),
-                    gender = gender,
-                    dailyWaterGoal = goal.toInt(),
-                    sleepTime = sleepTime )
+                    name = user.name,
+                    age = user.age,
+                    weight = user.weight,
+                    height = user.height,
+                    gender = user.gender,
+                    dailyWaterGoal = user.dailyWaterGoal,
+                    sleepTime = user.sleepTime
+                )
                 onAction(EditProfileContract.EditProfileUiAction.OnClickSaveChanges(user))
             }) {
                 Text(text = "Update")

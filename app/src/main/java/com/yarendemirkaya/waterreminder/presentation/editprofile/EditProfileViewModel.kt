@@ -15,12 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditProfileViewModel @Inject constructor(private val repository: UserRepository) :
-    ViewModel() {
+class EditProfileViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
 
-    private val _uiState =
-        MutableStateFlow(EditProfileContract.EditProfileUiState(isLoggedIn = false, user = User()))
+    private val _uiState = MutableStateFlow(EditProfileContract.EditProfileUiState.initial())
     val uiState: StateFlow<EditProfileContract.EditProfileUiState> = _uiState.asStateFlow()
+
     private val _uiEffect = MutableSharedFlow<EditProfileContract.EditProfileUiEffect>()
     val uiEffect: SharedFlow<EditProfileContract.EditProfileUiEffect> = _uiEffect.asSharedFlow()
 
