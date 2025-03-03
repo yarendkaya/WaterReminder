@@ -92,7 +92,7 @@ class HomeViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isAddedInfo = result.data)
                         if (!result.data) {
                             _uiState.update {
-                                it.copy(showBottomSheet = true)
+                                it.copy(showEditDialog = true)
                             }
                         }
                     }

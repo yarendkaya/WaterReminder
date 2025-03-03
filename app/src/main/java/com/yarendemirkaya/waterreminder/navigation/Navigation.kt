@@ -14,7 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.yarendemirkaya.waterreminder.presentation.editprofile.EditProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.editprofile.ProfileEditScreen
-import com.yarendemirkaya.waterreminder.presentation.home.HomeContract
 import com.yarendemirkaya.waterreminder.presentation.home.HomeScreen
 import com.yarendemirkaya.waterreminder.presentation.home.HomeViewModel
 import com.yarendemirkaya.waterreminder.presentation.intro.IntroScreen
@@ -124,9 +123,7 @@ fun Navigation(navController: NavHostController) {
         composable(route = "editProfile") {
 
             val viewModel: EditProfileViewModel = hiltViewModel()
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
-            val lifecycleOwner = LocalLifecycleOwner.current
 
             ProfileEditScreen(
                 uiEffect = uiEffect,
@@ -157,7 +154,8 @@ fun Navigation(navController: NavHostController) {
                     navController.navigate("login")
                 },
                 uiState = uiState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
+                uiEffect = uiEffect
             )
         }
         composable("intro") {

@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun RegisterScreen(
@@ -19,8 +21,25 @@ fun RegisterScreen(
     onAction: (RegisterContract.RegisterUiAction) -> Unit,
     onNavigateToLoginScreen: (RegisterContract.RegisterUiEffect.GoToLoginScreen) -> Unit,
     onNavigateToHomeScreen: (RegisterContract.RegisterUiEffect.GoToHomeScreen) -> Unit,
+    uiEffect: SharedFlow<RegisterContract.RegisterUiEffect>
 ) {
 
+
+    uiEffect.collectWithLifecycle {
+        when (it) {
+            is RegisterContract.RegisterUiEffect.GoToHomeScreen -> {
+                onNavigateToHomeScreen(it)
+            }
+
+            is RegisterContract.RegisterUiEffect.GoToLoginScreen -> {
+                onNavigateToLoginScreen(it)
+            }
+
+            is RegisterContract.RegisterUiEffect.ShowToast -> {
+                //showToast(it.message)
+            }
+        }
+    }
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "Register")
         Spacer(modifier = Modifier.height(16.dp))
@@ -41,14 +60,13 @@ fun RegisterScreen(
 
         Button(onClick = {
             onAction(RegisterContract.RegisterUiAction.SignUpClicked)
-            onNavigateToHomeScreen(RegisterContract.RegisterUiEffect.GoToHomeScreen)
         }) {
             Text(text = "Register")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
         TextButton(
-            onClick = { onNavigateToLoginScreen(RegisterContract.RegisterUiEffect.GoToLoginScreen) }
+            onClick = { onAction(RegisterContract.RegisterUiAction.SignInClicked) }
         ) {
             Text(text = "Already have an account? Login")
         }

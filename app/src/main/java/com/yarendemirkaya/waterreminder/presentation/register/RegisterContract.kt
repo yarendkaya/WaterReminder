@@ -11,6 +11,7 @@ object RegisterContract {
         data object SignUpClicked : RegisterUiAction()
         data class EmailChanged(val email: String) : RegisterUiAction()
         data class PasswordChanged(val password: String) : RegisterUiAction()
+        data object SignInClicked : RegisterUiAction()
     }
 
     sealed class RegisterUiEffect {

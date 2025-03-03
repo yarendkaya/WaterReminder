@@ -26,6 +26,8 @@ class UserDataSource @Inject constructor(
                 println(e.localizedMessage ?: "Failed to save user info")
             }
 
+
+            //burası ayrılacak daha sonra
             try {
                 fireStore.collection("isAddedInfo").document(currentUser.uid).set(
                     mapOf("isAddedInfo" to true)
@@ -63,5 +65,4 @@ class UserDataSource @Inject constructor(
             Resource.Error("Error checking user data")
         }
     }
-
 }
