@@ -13,6 +13,5 @@ class AuthRepository @Inject constructor(private val auth: AuthDataSource) {
         return auth.signUp(email, password)
     }
 
-    fun logOut() = auth.logOut()
-    suspend fun isUserLoggedIn() = auth.isUserLoggedIn()
+    suspend fun isUserLoggedIn() :Boolean= auth.isUserLoggedIn()
 }

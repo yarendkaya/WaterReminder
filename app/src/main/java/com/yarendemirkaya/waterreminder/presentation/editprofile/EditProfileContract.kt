@@ -6,8 +6,16 @@ object EditProfileContract {
 
     data class EditProfileUiState(
         val isLoggedIn: Boolean = false,
-        val user: User
-    )
+        val user: User = User()
+    ) {
+        //bu mantıklı mı değil mi araştır.
+
+        companion object {
+            fun initial(): EditProfileUiState {
+                return EditProfileUiState()
+            }
+        }
+    }
 
     sealed class EditProfileUiAction {
         data class OnClickSaveChanges(val user: User) : EditProfileUiAction()

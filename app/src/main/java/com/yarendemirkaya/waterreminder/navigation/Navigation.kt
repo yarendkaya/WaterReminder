@@ -1,5 +1,6 @@
 package com.yarendemirkaya.waterreminder.navigation
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,11 +11,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.google.gson.Gson
+import com.yarendemirkaya.waterreminder.data.models.User
 import com.yarendemirkaya.waterreminder.presentation.editprofile.EditProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.editprofile.ProfileEditScreen
-import com.yarendemirkaya.waterreminder.presentation.home.HomeContract
 import com.yarendemirkaya.waterreminder.presentation.home.HomeScreen
 import com.yarendemirkaya.waterreminder.presentation.home.HomeViewModel
 import com.yarendemirkaya.waterreminder.presentation.intro.IntroScreen
@@ -22,17 +26,20 @@ import com.yarendemirkaya.waterreminder.presentation.intro.IntroViewModel
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
+import com.yarendemirkaya.waterreminder.presentation.profile.ProfileContract
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileScreen
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
+import com.yarendemirkaya.waterreminder.presentation.splash.SplashScreen
+import com.yarendemirkaya.waterreminder.presentation.splash.SplashViewModel
 
 
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = "intro"
+        startDestination = "splash"
     ) {
         composable("login") {
             val viewModel: LoginViewModel = hiltViewModel()
@@ -77,39 +84,17 @@ fun Navigation(navController: NavHostController) {
             LaunchedEffect(uiEffect, lifecycleOwner) {
                 lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.getWaterIntakes()
-                    uiEffect.collect { effect ->
-                        when (effect) {
-                            is HomeContract.HomeUiEffect.ShowToast -> {
-                                Log.d("HomeViewModel", "ShowToast: ${effect.message}")
-                            }
-
-                            is HomeContract.HomeUiEffect.NavigateToEditProfile -> {
-                                navController.navigate("editProfile")
-                            }
-                        }
-                    }
+                    viewModel.checkUserHasData()
                 }
             }
 
-//            LaunchedEffect(Unit) {
-//                viewModel.onAction(HomeContract.HomeUiAction.CheckFirstLogin)
-//                viewModel.getWaterIntakes()
-//                uiEffect.collect { effect ->
-//                    when (effect) {
-//                        is HomeContract.HomeUiEffect.ShowToast -> {
-//                            Log.d("HomeViewModel", "ShowToast: ${effect.message}")
-//                        }
-//
-//                        is HomeContract.HomeUiEffect.NavigateToEditProfile -> {
-//                            navController.navigate("editProfile")
-//                        }
-//                    }
-//                }
-//            }
-
             HomeScreen(
                 uiState = uiState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
+                uiEffect = uiEffect,
+                onNavigateToProfileScreen = {
+                    navController.navigate("profile")
+                }
             )
         }
 
@@ -118,29 +103,42 @@ fun Navigation(navController: NavHostController) {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
             val lifecycleOwner = LocalLifecycleOwner.current
+
+            LaunchedEffect(uiEffect, lifecycleOwner) {
+                viewModel.getUserData()
+            }
+
             ProfileScreen(
-                uiState = uiState,
-                onNavigateToEditProfileScreen = {
-                    navController.navigate("editProfile")
+                onNavigateToEditProfileScreen = { user ->
+                    val userJson = Uri.encode(Gson().toJson(user))
+                    navController.navigate("editProfile/$userJson")
                 },
                 onAction = viewModel::onAction,
                 uiEffect = uiEffect,
+                uiState = uiState
             )
         }
 
-        composable(route = "editProfile") {
+        composable(
+            route = "editProfile/{user}",
+            arguments = listOf(navArgument("user") { type = NavType.StringType })
+        ) { backStackEntry ->
+
+            val userJson = backStackEntry.arguments?.getString("user")
+            val user = Gson().fromJson(userJson, User::class.java)
+
 
             val viewModel: EditProfileViewModel = hiltViewModel()
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val uiEffect = viewModel.uiEffect
-            val lifecycleOwner = LocalLifecycleOwner.current
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             ProfileEditScreen(
                 uiEffect = uiEffect,
+                user = user,
                 onAction = viewModel::onAction,
                 onNavigateToProfileScreen = {
                     navController.navigate("profile")
-                }
+                },
             )
         }
 
@@ -164,7 +162,8 @@ fun Navigation(navController: NavHostController) {
                     navController.navigate("login")
                 },
                 uiState = uiState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
+                uiEffect = uiEffect
             )
         }
         composable("intro") {
@@ -179,7 +178,27 @@ fun Navigation(navController: NavHostController) {
                 onNavigateToRegisterScreen = {
                     navController.navigate("register")
                 },
-                uiEffect= uiEffect,
+                uiEffect = uiEffect,
+                onNavigateToHomeScreen = {
+                    navController.navigate("home")
+                }
+            )
+        }
+
+        composable("splash") {
+
+            val viewModel: SplashViewModel = hiltViewModel()
+            val uiEffect = viewModel.uiEffect
+
+            LaunchedEffect(uiEffect) {
+                viewModel.checkIsUserLoggedIn()
+            }
+
+            SplashScreen(
+                uiEffect = uiEffect,
+                onNavigateToIntroScreen = {
+                    navController.navigate("intro")
+                },
                 onNavigateToHomeScreen = {
                     navController.navigate("home")
                 }

@@ -2,6 +2,7 @@ package com.yarendemirkaya.waterreminder.data.datasource
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.data.models.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -10,13 +11,26 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
-class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestore, private val auth: FirebaseAuth) {
+class UserDataSource @Inject constructor(
+    private val fireStore: FirebaseFirestore,
+    auth: FirebaseAuth
+) {
 
+    private val currentUser = auth.currentUser
     suspend fun saveUserInfo(user: User) {
-        val currentUser = auth.currentUser
         if (currentUser != null) {
             try {
                 fireStore.collection("users").document(currentUser.uid).set(user).await()
+            } catch (e: Exception) {
+                println(e.localizedMessage ?: "Failed to save user info")
+            }
+
+
+            //burası ayrılacak daha sonra
+            try {
+                fireStore.collection("isAddedInfo").document(currentUser.uid).set(
+                    mapOf("isAddedInfo" to true)
+                ).await()
             } catch (e: Exception) {
                 println(e.localizedMessage ?: "Failed to save user info")
             }
@@ -37,22 +51,38 @@ class UserDataSource @Inject constructor(private val fireStore: FirebaseFirestor
         awaitClose { listener.remove() }
     }
 
-//    fun updateProfileCompletionStatus(userId: String, onComplete: (Boolean) -> Unit) {
-//        fireStore.collection("users").document(userId)
-//            .update("isProfileCompleted", true)
-//            .addOnSuccessListener { onComplete(true) }
-//            .addOnFailureListener { onComplete(false) }
-//    }
-//
-//    fun checkProfileCompletion(userId: String, onResult: (Boolean) -> Unit) {
-//        fireStore.collection("users").document(userId)
-//            .get()
-//            .addOnSuccessListener { document ->
-//                val isCompleted = document.getBoolean("isProfileCompleted") ?: false
-//                onResult(isCompleted)
-//            }
-//            .addOnFailureListener {
-//                onResult(false)
-//            }
-//    }
+
+    suspend fun checkUserHasData(userId: String): Resource<Boolean> {
+        return try {
+            val result = fireStore.collection("isAddedInfo").document(userId).get().await()
+
+            val isAddedInfo = result.getBoolean("isAddedInfo")
+
+            Resource.Success(isAddedInfo ?: false)
+        } catch (e: Exception) {
+            println(e.localizedMessage ?: "Failed to check user data")
+            Resource.Error("Error checking user data")
+        }
+    }
+
+    suspend fun updateUserData(user: User): Resource<Boolean> {
+        val db = FirebaseFirestore.getInstance()
+        val userRef = currentUser?.let { db.collection("users").document(it.uid) }
+
+        val userMap = mapOf(
+            "name" to user.name,
+            "age" to user.age,
+            "height" to user.height,
+            "weight" to user.weight,
+            "gender" to user.gender,
+            "dailyWaterGoal" to user.dailyWaterGoal,
+            "sleepTime" to user.sleepTime
+        )
+        return try {
+            userRef?.update(userMap)?.await()
+            Resource.Success(true)
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Failed to update user data")
+        }
+    }
 }

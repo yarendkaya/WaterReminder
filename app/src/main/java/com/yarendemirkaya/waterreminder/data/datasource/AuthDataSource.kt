@@ -8,7 +8,7 @@ import javax.inject.Inject
 class AuthDataSource @Inject constructor(
     private val auth: FirebaseAuth,
 ) {
-   suspend fun isUserLoggedIn(): Boolean{
+   suspend fun isUserLoggedIn(): Boolean {
         return auth.currentUser != null
     }
 

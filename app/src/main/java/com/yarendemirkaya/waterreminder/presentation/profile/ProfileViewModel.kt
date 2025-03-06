@@ -19,6 +19,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepo: UserRepository,
 ) : ViewModel() {
+
+
     private val _uiState =
         MutableStateFlow(ProfileContract.ProfileUiState(isLoggedIn = false, user = User()))
     val uiState: StateFlow<ProfileContract.ProfileUiState> = _uiState.asStateFlow()
@@ -30,18 +32,15 @@ class ProfileViewModel @Inject constructor(
         when (action) {
             is ProfileContract.ProfileUiAction.OnClickEdit -> {
                 viewModelScope.launch {
-                    _uiEffect.emit(ProfileContract.ProfileUiEffect.NavigateToEdit)
+                    _uiEffect.emit(ProfileContract.ProfileUiEffect.NavigateToEdit(action.user))
                 }
             }
         }
     }
-    init {
-        getUserData()
-    }
 
-    private fun getUserData() {
+
+    fun getUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-
         viewModelScope.launch {
             userRepo.getUserData(userId).collect { user ->
                 if (user != null) {
@@ -50,8 +49,11 @@ class ProfileViewModel @Inject constructor(
                         isLoggedIn = true
                     )
                 }
-                _uiEffect.emit(ProfileContract.ProfileUiEffect.NavigateToEdit)
             }
         }
+    }
+
+    fun checkUserHasData() {
+
     }
 }

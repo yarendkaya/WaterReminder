@@ -6,14 +6,15 @@ object ProfileContract {
 
     data class ProfileUiState(
         val isLoggedIn: Boolean = false,
-        val user:User
+        val user:User=User()
     )
+
 
     sealed class ProfileUiAction {
         data class OnClickEdit(val user: User) : ProfileUiAction()
     }
 
     sealed class ProfileUiEffect {
-        data object NavigateToEdit : ProfileUiEffect()
+        data class NavigateToEdit(val user: User) : ProfileUiEffect()
     }
 }

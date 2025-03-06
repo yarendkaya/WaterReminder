@@ -83,7 +83,6 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
 
     implementation(libs.gson)
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
 
 }

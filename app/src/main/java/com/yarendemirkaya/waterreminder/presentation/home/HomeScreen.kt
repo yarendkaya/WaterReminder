@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,40 +34,57 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
+import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
-
+import kotlinx.coroutines.flow.SharedFlow
 
 
 @Composable
 fun HomeScreen(
     uiState: HomeContract.HomeUiState,
-    onAction: (HomeContract.HomeUiAction) -> Unit
+    uiEffect: SharedFlow<HomeContract.HomeUiEffect>,
+    onAction: (HomeContract.HomeUiAction) -> Unit,
+    onNavigateToProfileScreen: () -> Unit
 ) {
-//    if (!uiState.isProfileCompleted) {
-//        ModalBottomSheet(
-//            onDismissRequest = { onAction(HomeContract.HomeUiAction.DismissBottomSheet) },
-//            modifier = Modifier.fillMaxWidth(),
-//            containerColor = Color.White,
-//            contentColor = Color.Black,
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(16.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text("Hoş Geldiniz! Profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
-//                Spacer(modifier = Modifier.height(10.dp))
-//                Button(onClick = {
-//                    onAction(HomeContract.HomeUiAction.EditProfileClicked)
-//                }) {
-//                    Text("Profili Düzenle")
-//                }
-//            }
-//        }
-//    }
+
+    uiEffect.collectWithLifecycle {
+        when (it) {
+            is HomeContract.HomeUiEffect.NavigateToProfile -> {
+                onNavigateToProfileScreen()
+            }
+
+            is HomeContract.HomeUiEffect.ShowToast -> {}
+        }
+    }
+
+
+    if (uiState.showEditDialog) {
+        Dialog(onDismissRequest = {  }) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, shape = RoundedCornerShape(16.dp))
+                    .padding(16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Hoş Geldiniz!Lütfen daha iyi bir deneyim için profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(onClick = {
+                        onAction(HomeContract.HomeUiAction.OnClickEditProfile)
+                    }) {
+                        Text("Profili Düzenle")
+                    }
+                }
+            }
+        }
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -133,6 +152,7 @@ fun HomeScreen(
     }
 }
 
+
 @Composable
 fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
     Column {
@@ -149,7 +169,7 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
                 onAction(
                     HomeContract.HomeUiAction.OnClickAddWaterIntake(
                         WaterIntake(
-                            amount = amount.toInt(),
+                            amount = amount.toIntOrNull() ?: 0,
                             time = System.currentTimeMillis().toString()
                         )
                     )
@@ -166,7 +186,9 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
     }
 }
 
+
 @Preview
 @Composable
 fun HomeScreenPreview() {
+
 }

@@ -1,8 +1,9 @@
 package com.yarendemirkaya.waterreminder.presentation.home
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yarendemirkaya.waterreminder.common.DataStoreHelper
+import com.google.firebase.auth.FirebaseAuth
 import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.common.toFormattedDate
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
@@ -22,8 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val waterRepository: WaterRepository,
-    private val userRepository: UserRepository,
-    private val dataStoreHelper: DataStoreHelper
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeContract.HomeUiState())
@@ -32,22 +32,12 @@ class HomeViewModel @Inject constructor(
     private val _uiEffect = MutableSharedFlow<HomeContract.HomeUiEffect>()
     val uiEffect: SharedFlow<HomeContract.HomeUiEffect> = _uiEffect.asSharedFlow()
 
-//    init {
-//        Log.d("HomeViewModel", "HomeViewModel Created")
-//        checkFirstLogin()
-//    }
-
-    private fun addWaterIntake(water: WaterIntake) {
-        viewModelScope.launch {
-            waterRepository.addWaterIntake(water)
-        }
-        getWaterIntakes()
-    }
 
     fun onAction(action: HomeContract.HomeUiAction) {
         viewModelScope.launch {
             when (action) {
                 is HomeContract.HomeUiAction.OnClickAddWaterIntake -> addWaterIntake(action.waterIntake)
+
                 is HomeContract.HomeUiAction.OnClickOpenDialog -> _uiState.update {
                     it.copy(isDialogOpen = true)
                 }
@@ -56,32 +46,24 @@ class HomeViewModel @Inject constructor(
                     it.copy(isDialogOpen = false)
                 }
 
-//                is HomeContract.HomeUiAction.CheckFirstLogin -> {
-//                    dataStoreHelper.isFirstLogin.collect { firstLogin ->
-//                        _uiState.update {
-//                            it.copy(
-//                                isFirstLogin = firstLogin,
-//                                showBottomSheet = firstLogin
-//                            )
-//                        }
-//                    }
-//                }
-
-//                is HomeContract.HomeUiAction.DismissBottomSheet -> {
-//                    _uiState.update {
-//                        it.copy(showBottomSheet = false)
-//                    }
-//                }
-
                 is HomeContract.HomeUiAction.OnClickEditProfile -> {
-                    _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToEditProfile)
-                    viewModelScope.launch { dataStoreHelper.setFirstLoginDone() }
+                    _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToProfile)
+                    viewModelScope.launch {
+
+                    }
                 }
             }
         }
     }
 
-    fun getWaterIntakes() {
+    private fun addWaterIntake(water: WaterIntake) {
+        viewModelScope.launch {
+            waterRepository.addWaterIntake(water)
+            getWaterIntakes()
+        }
+    }
+
+    internal fun getWaterIntakes() {
         viewModelScope.launch {
             when (val waterIntakes = waterRepository.getWaterIntakes()) {
                 is Resource.Success -> {
@@ -100,31 +82,32 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-//    private fun checkFirstLogin() {
-//        viewModelScope.launch {
-//            dataStoreHelper.isFirstLogin.collect {
-//                Log.d("HomeViewModel", "checkFirstLogin: $it")
-//                _uiState.update {
-//                    it.copy(
-//                        isFirstLogin = it.isFirstLogin,
-//                        showBottomSheet = it.isFirstLogin
-//                    )
-//                }
-//            }
-//        }
-//    }
 
-//    fun checkUserProfile(userId: String) {
-//        userRepository.checkProfileCompletion(userId) { isCompleted ->
-//            _uiState.value = _uiState.value.copy(isProfileCompleted = isCompleted)
-//        }
-//    }
-//
-//    fun updateProfileCompleted(userId: String) {
-//        userRepository.updateProfileCompletionStatus(userId) { isSuccess ->
-//            if (isSuccess) {
-//                _uiState.value = _uiState.value.copy(isProfileCompleted = true)
-//            }
-//        }
-//    }
+    internal fun checkUserHasData() {
+        viewModelScope.launch {
+            val userUid = FirebaseAuth.getInstance().currentUser?.uid
+            if (userUid != null) {
+                when (val result = userRepository.checkUserHasData(userUid)) {
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(isAddedInfo = result.data)
+                        if (!result.data) {
+                            _uiState.update {
+                                it.copy(showEditDialog = true)
+                            }
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(result.message))
+                    }
+                }
+            }
+        }
+    }
+
+    fun setUserInfo(){
+        viewModelScope.launch {
+
+        }
+    }
 }

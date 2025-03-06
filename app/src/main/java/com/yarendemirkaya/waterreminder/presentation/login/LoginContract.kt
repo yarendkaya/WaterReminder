@@ -3,7 +3,6 @@ package com.yarendemirkaya.waterreminder.presentation.login
 object LoginContract {
 
     data class LoginUiState(
-        val isLoggedIn: Boolean = false,
         val email: String = "",
         val password: String = "",
     )
