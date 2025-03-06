@@ -19,4 +19,9 @@ class UserRepository @Inject constructor(private val userDataSource: UserDataSou
     suspend fun checkUserHasData(userId: String): Resource<Boolean> {
         return userDataSource.checkUserHasData(userId)
     }
+
+    suspend fun updateUserData(user: User) {
+        userDataSource.updateUserData(user)
+    }
+
 }

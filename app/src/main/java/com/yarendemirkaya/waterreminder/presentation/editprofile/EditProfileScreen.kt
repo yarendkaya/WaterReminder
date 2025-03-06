@@ -1,13 +1,13 @@
 package com.yarendemirkaya.waterreminder.presentation.editprofile
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,10 +16,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.yarendemirkaya.waterreminder.data.models.User
 import kotlinx.coroutines.flow.SharedFlow
+
 
 @Composable
 fun ProfileEditScreen(
@@ -28,6 +29,7 @@ fun ProfileEditScreen(
     onNavigateToProfileScreen: () -> Unit,
     onAction: (EditProfileContract.EditProfileUiAction) -> Unit,
 ) {
+
     LaunchedEffect(uiEffect) {
         uiEffect.collect { effect ->
             when (effect) {
@@ -38,96 +40,73 @@ fun ProfileEditScreen(
         }
     }
 
-    var name by rememberSaveable { mutableStateOf("") }
-    var age by rememberSaveable { mutableStateOf("") }
-    var weight by rememberSaveable { mutableStateOf("") }
-    var height by rememberSaveable { mutableStateOf("") }
-    var gender by rememberSaveable { mutableStateOf("") }
-    var goal by rememberSaveable { mutableStateOf("") }
-    var sleepTime by rememberSaveable { mutableStateOf("") }
 
-    Scaffold { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+    var name by rememberSaveable { mutableStateOf(user.name) }
+    var age by rememberSaveable { mutableStateOf(user.age.toString()) }
+    var height by rememberSaveable { mutableStateOf(user.height.toString()) }
+    var weight by rememberSaveable { mutableStateOf(user.weight.toString()) }
+    var gender by rememberSaveable { mutableStateOf(user.gender) }
+    var goal by rememberSaveable { mutableStateOf(user.dailyWaterGoal.toString()) }
+    var sleepTime by rememberSaveable { mutableStateOf(user.sleepTime) }
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(text = "Edit Profile")
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+        OutlinedTextField(
+            value = age,
+            onValueChange = { age = it },
+            label = { Text("Age") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
-        {
-            OutlinedTextField(
-                value = user.name,
-                onValueChange = {
-                    name = it
-                },
-                label = { Text("Name") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = user.age.toString(),
-                onValueChange = {
-                    age = it
-                },
-                label = { Text("Age") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = user.weight.toString(),
-                onValueChange = {
-                    weight = it
-                },
-                label = { Text("Weight") },
-                modifier = Modifier.fillMaxWidth()
-            )
+        OutlinedTextField(
+            value = height,
+            onValueChange = { height = it },
+            label = { Text("Height (cm)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+        OutlinedTextField(
+            value = weight,
+            onValueChange = { weight = it },
+            label = { Text("Weight (kg)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+        OutlinedTextField(
+            value = gender,
+            onValueChange = { gender = it },
+            label = { Text("Gender") })
+        OutlinedTextField(
+            value = goal,
+            onValueChange = { goal = it },
+            label = { Text("Daily Water Goal (ml)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+        OutlinedTextField(
+            value = sleepTime,
+            onValueChange = { sleepTime = it },
+            label = { Text("Sleep Time") })
 
-            OutlinedTextField(
-                value = user.height.toString(),
-                onValueChange = {
-                    height = it
-                },
-                label = { Text("Height") },
-                modifier = Modifier.fillMaxWidth()
-            )
+        Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = user.gender,
-                onValueChange = {
-                    gender = it
-                },
-                label = { Text("Gender") },
-                modifier = Modifier.fillMaxWidth()
+        Button(onClick = {
+            val updatedUser = user.copy(
+                name = name,
+                age = age.toIntOrNull() ?: user.age,
+                height = height.toIntOrNull() ?: user.height,
+                weight = weight.toIntOrNull() ?: user.weight,
+                gender = gender,
+                dailyWaterGoal = goal.toIntOrNull() ?: user.dailyWaterGoal,
+                sleepTime = sleepTime
             )
-
-            OutlinedTextField(
-                value = user.dailyWaterGoal.toString(),
-                onValueChange = {
-                    goal = it
-                },
-                label = { Text("Goal") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = user.sleepTime,
-                onValueChange = {
-                    sleepTime = it
-                },
-                label = { Text("Sleep Time") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Button(onClick = {
-                val user = User(
-                    name = user.name,
-                    age = user.age,
-                    weight = user.weight,
-                    height = user.height,
-                    gender = user.gender,
-                    dailyWaterGoal = user.dailyWaterGoal,
-                    sleepTime = user.sleepTime
-                )
-                onAction(EditProfileContract.EditProfileUiAction.OnClickSaveChanges(user))
-            }) {
-                Text(text = "Update")
-            }
+            onAction(EditProfileContract.EditProfileUiAction.OnClickSaveChanges(updatedUser))
+        }) {
+            Text(text = "Save")
         }
     }
 }

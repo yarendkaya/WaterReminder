@@ -13,12 +13,11 @@ import javax.inject.Inject
 
 class UserDataSource @Inject constructor(
     private val fireStore: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    auth: FirebaseAuth
 ) {
 
-
+    private val currentUser = auth.currentUser
     suspend fun saveUserInfo(user: User) {
-        val currentUser = auth.currentUser
         if (currentUser != null) {
             try {
                 fireStore.collection("users").document(currentUser.uid).set(user).await()
@@ -63,6 +62,27 @@ class UserDataSource @Inject constructor(
         } catch (e: Exception) {
             println(e.localizedMessage ?: "Failed to check user data")
             Resource.Error("Error checking user data")
+        }
+    }
+
+    suspend fun updateUserData(user: User): Resource<Boolean> {
+        val db = FirebaseFirestore.getInstance()
+        val userRef = currentUser?.let { db.collection("users").document(it.uid) }
+
+        val userMap = mapOf(
+            "name" to user.name,
+            "age" to user.age,
+            "height" to user.height,
+            "weight" to user.weight,
+            "gender" to user.gender,
+            "dailyWaterGoal" to user.dailyWaterGoal,
+            "sleepTime" to user.sleepTime
+        )
+        return try {
+            userRef?.update(userMap)?.await()
+            Resource.Success(true)
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Failed to update user data")
         }
     }
 }
