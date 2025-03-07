@@ -15,5 +15,7 @@
     <string name="welcome_back">Welcome Back</string>
     <string name="add_water"> Add (200 ml)</string>
     <string name="add_icon">+</string>
+    <string name="remove_icon">-</string>
+    <string name="todays_water">Today\'s Water Intake</string>
 
 </resources>

@@ -84,5 +84,6 @@ dependencies {
 
     implementation(libs.gson)
 
+    implementation (libs.lottie.compose)
 
 }

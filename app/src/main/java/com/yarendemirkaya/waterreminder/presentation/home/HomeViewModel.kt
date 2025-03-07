@@ -52,6 +52,13 @@ class HomeViewModel @Inject constructor(
 
                     }
                 }
+
+                is HomeContract.HomeUiAction.OnClickDeleteWaterIntake -> {
+                    viewModelScope.launch {
+                        waterRepository.deleteWaterIntake(action.waterIntake)
+                        getWaterIntakes()
+                    }
+                }
             }
         }
     }
@@ -105,7 +112,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun setUserInfo(){
+    fun setUserInfo() {
         viewModelScope.launch {
 
         }

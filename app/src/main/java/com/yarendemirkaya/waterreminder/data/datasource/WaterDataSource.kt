@@ -46,6 +46,24 @@ class WaterDataSource @Inject constructor(private val fireStore: FirebaseFiresto
             Resource.Error(e.message ?: "Error fetching water intakes")
         }
     }
+
+    suspend fun deleteWaterIntake(waterIntake: WaterIntake) {
+        try {
+            val querySnapshot = fireStore.collection("users")
+                .document(userId)
+                .collection("waterIntakes")
+                .whereEqualTo("amount", waterIntake.amount) // **Belirli bir kriter ile filtreleme**
+                .whereEqualTo("time", waterIntake.time)
+                .get()
+                .await()
+
+            for (document in querySnapshot.documents) {
+                document.reference.delete().await() // **Bulunan belgeyi siliyoruz**
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
 
 

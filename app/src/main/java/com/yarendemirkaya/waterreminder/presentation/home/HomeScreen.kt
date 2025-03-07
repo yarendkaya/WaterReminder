@@ -16,8 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -28,8 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,8 +36,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
+import com.yarendemirkaya.waterreminder.R.color.dark_gray
+import com.yarendemirkaya.waterreminder.R.color.light_background
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
+import com.yarendemirkaya.waterreminder.presentation.home.components.LottieAnimation
+import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 
@@ -49,7 +53,6 @@ fun HomeScreen(
     onAction: (HomeContract.HomeUiAction) -> Unit,
     onNavigateToProfileScreen: () -> Unit
 ) {
-
     uiEffect.collectWithLifecycle {
         when (it) {
             is HomeContract.HomeUiEffect.NavigateToProfile -> {
@@ -60,9 +63,8 @@ fun HomeScreen(
         }
     }
 
-
     if (uiState.showEditDialog) {
-        Dialog(onDismissRequest = {  }) {
+        Dialog(onDismissRequest = { }) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,7 +74,10 @@ fun HomeScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Hoş Geldiniz!Lütfen daha iyi bir deneyim için profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
+                    Text(
+                        "Hoş Geldiniz!Lütfen daha iyi bir deneyim için profil bilgilerinizi güncelleyin.",
+                        fontSize = 18.sp
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
                     Button(onClick = {
                         onAction(HomeContract.HomeUiAction.OnClickEditProfile)
@@ -88,23 +93,25 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(color = colorResource(id = light_background))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = colorResource(id = app_color))
+                .padding(start = 24.dp, top = 32.dp)
+                .background(color = colorResource(id = light_background))
         ) {
             Text(text = stringResource(id = R.string.welcome_back), fontSize = 36.sp)
         }
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Icon", fontSize = 180.sp, modifier = Modifier.align(Alignment.Center))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_alarm),
-                contentDescription = "Icon",
-                modifier = Modifier.align(Alignment.TopEnd),
-                tint = Color.Unspecified,
-            )
+
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            LottieAnimation()
+//            Icon(
+//                painter = painterResource(id = R.drawable.ic_alarm),
+//                contentDescription = "Icon",
+//                modifier = Modifier.align(Alignment.TopEnd),
+//                tint = Color.Unspecified,
+//            )
         }
 
         Row(
@@ -125,9 +132,11 @@ fun HomeScreen(
             }) {
                 Text(text = stringResource(id = R.string.add_water))
             }
+
             if (uiState.isDialogOpen) {
                 AddWaterDialog(onAction = onAction)
             }
+
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
@@ -137,18 +146,14 @@ fun HomeScreen(
                 Text(text = stringResource(id = R.string.add_icon))
             }
         }
+
         Spacer(modifier = Modifier.height(24.dp))
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, Color.Gray)
-                .padding(8.dp)
-        ) {
-            items(uiState.waterIntakes) { waterIntake ->
-                Text(text = waterIntake.amount.toString())
-                Text(text = waterIntake.time.orEmpty())
-            }
-        }
+
+        Text(
+            text = stringResource(id = R.string.todays_water), fontSize = 24.sp,
+            color = colorResource(id = dark_gray)
+        )
+        WaterGrid(waterIntakes = uiState.waterIntakes, onDeleteClick = {})
     }
 }
 
@@ -186,9 +191,31 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
     }
 }
 
+@Composable
+fun WaterGrid(waterIntakes: List<WaterIntake>, onDeleteClick: (WaterIntake) -> Unit) {
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {}
+    }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, Color.Gray)
+            .padding(8.dp)
+            .nestedScroll(nestedScrollConnection)
+    ) {
+        items(waterIntakes) { waterIntake ->
+            WaterItem(waterIntake = waterIntake, onDeleteClick = {
+                onDeleteClick(waterIntake)
+            })
+        }
+    }
+}
 
 @Preview
 @Composable
 fun HomeScreenPreview() {
-
+    HomeScreen(uiState = HomeContract.HomeUiState(),
+        uiEffect = MutableSharedFlow(),
+        onAction = {},
+        onNavigateToProfileScreen = {})
 }

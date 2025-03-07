@@ -15,9 +15,11 @@ object HomeContract {
 
     sealed class HomeUiAction {
         data class OnClickAddWaterIntake(val waterIntake: WaterIntake) : HomeUiAction()
+        data class OnClickDeleteWaterIntake(val waterIntake: WaterIntake) : HomeUiAction()
         data object OnClickOpenDialog : HomeUiAction()
         data object OnClickCloseDialog : HomeUiAction()
         data object OnClickEditProfile : HomeUiAction()
+
     }
 
     sealed class HomeUiEffect {
