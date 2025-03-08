@@ -48,16 +48,10 @@ class HomeViewModel @Inject constructor(
 
                 is HomeContract.HomeUiAction.OnClickEditProfile -> {
                     _uiEffect.emit(HomeContract.HomeUiEffect.NavigateToProfile)
-                    viewModelScope.launch {
-
-                    }
                 }
 
                 is HomeContract.HomeUiAction.OnClickDeleteWaterIntake -> {
-                    viewModelScope.launch {
-                        waterRepository.deleteWaterIntake(action.waterIntake)
-                        getWaterIntakes()
-                    }
+                    deleteWaterIntake(action.waterIntake)
                 }
             }
         }
@@ -112,9 +106,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun setUserInfo() {
+    private fun deleteWaterIntake(waterIntake: WaterIntake) {
         viewModelScope.launch {
-
+            when (val result = waterRepository.deleteWaterIntake(waterIntake)) {
+                is Resource.Success -> getWaterIntakes()
+                is Resource.Error -> _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(result.message))
+            }
         }
     }
 }

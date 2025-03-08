@@ -163,7 +163,9 @@ fun HomeScreen(
             text = stringResource(id = R.string.todays_water), fontSize = 24.sp,
             color = colorResource(id = dark_gray)
         )
-        WaterGrid(waterIntakes = uiState.waterIntakes, onDeleteClick = {})
+        WaterGrid(waterIntakes = uiState.waterIntakes, onDeleteClick = {
+            onAction(HomeContract.HomeUiAction.OnClickDeleteWaterIntake(it))
+        })
     }
 }
 
