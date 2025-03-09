@@ -9,7 +9,6 @@ object ProfileContract {
         val user:User=User()
     )
 
-
     sealed class ProfileUiAction {
         data class OnClickEdit(val user: User) : ProfileUiAction()
     }

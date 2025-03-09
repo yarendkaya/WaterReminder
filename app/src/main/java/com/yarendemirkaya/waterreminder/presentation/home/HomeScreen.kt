@@ -43,14 +43,14 @@ import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfileDialog
 import com.yarendemirkaya.waterreminder.presentation.home.components.LottieAnimation
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 
 
 @Composable
 fun HomeScreen(
     uiState: HomeContract.HomeUiState,
-    uiEffect: SharedFlow<HomeContract.HomeUiEffect>,
+    uiEffect: Flow<HomeContract.HomeUiEffect>,
     onAction: (HomeContract.HomeUiAction) -> Unit,
     onNavigateToProfileScreen: () -> Unit
 ) {
