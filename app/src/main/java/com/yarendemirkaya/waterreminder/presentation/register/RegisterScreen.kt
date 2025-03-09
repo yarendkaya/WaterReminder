@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
@@ -21,7 +22,7 @@ fun RegisterScreen(
     onAction: (RegisterContract.RegisterUiAction) -> Unit,
     onNavigateToLoginScreen: (RegisterContract.RegisterUiEffect.GoToLoginScreen) -> Unit,
     onNavigateToHomeScreen: (RegisterContract.RegisterUiEffect.GoToHomeScreen) -> Unit,
-    uiEffect: SharedFlow<RegisterContract.RegisterUiEffect>
+    uiEffect: Flow<RegisterContract.RegisterUiEffect>
 ) {
 
 

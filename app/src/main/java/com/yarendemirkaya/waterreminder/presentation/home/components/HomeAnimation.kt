@@ -26,7 +26,7 @@ fun LottieAnimation() {
         iterations = LottieConstants.IterateForever)
     Box(
         modifier = Modifier
-            .size(240.dp)
+            .size(210.dp)
             .background(colorResource(id = R.color.light_background)),
         contentAlignment = Alignment.Center
     ) {
