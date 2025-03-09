@@ -85,6 +85,7 @@ fun Navigation(navController: NavHostController) {
                 lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.getWaterIntakes()
                     viewModel.checkUserHasData()
+                    viewModel.getUserName()
                 }
             }
 

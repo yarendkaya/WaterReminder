@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -34,11 +34,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
+import com.yarendemirkaya.waterreminder.R.color.dark_gray
+import com.yarendemirkaya.waterreminder.R.color.light_background
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
+import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfileDialog
+import com.yarendemirkaya.waterreminder.presentation.home.components.LottieAnimation
+import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 
@@ -49,7 +54,6 @@ fun HomeScreen(
     onAction: (HomeContract.HomeUiAction) -> Unit,
     onNavigateToProfileScreen: () -> Unit
 ) {
-
     uiEffect.collectWithLifecycle {
         when (it) {
             is HomeContract.HomeUiEffect.NavigateToProfile -> {
@@ -60,51 +64,40 @@ fun HomeScreen(
         }
     }
 
-
     if (uiState.showEditDialog) {
-        Dialog(onDismissRequest = {  }) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White, shape = RoundedCornerShape(16.dp))
-                    .padding(16.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Hoş Geldiniz!Lütfen daha iyi bir deneyim için profil bilgilerinizi güncelleyin.", fontSize = 18.sp)
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Button(onClick = {
-                        onAction(HomeContract.HomeUiAction.OnClickEditProfile)
-                    }) {
-                        Text("Profili Düzenle")
-                    }
-                }
-            }
-        }
+        EditProfileDialog(onAction = onAction)
     }
-
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .background(color = colorResource(id = light_background))
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = colorResource(id = app_color))
+                .padding(start = 16.dp, top = 32.dp)
+                .background(color = colorResource(id = light_background))
         ) {
             Text(text = stringResource(id = R.string.welcome_back), fontSize = 36.sp)
+            Text(text = uiState.userName, fontSize = 24.sp, color = colorResource(id = dark_gray))
         }
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Icon", fontSize = 180.sp, modifier = Modifier.align(Alignment.Center))
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_alarm),
                 contentDescription = "Icon",
-                modifier = Modifier.align(Alignment.TopEnd),
-                tint = Color.Unspecified,
-            )
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .align(Alignment.End),
+                tint = Color.Unspecified)
+            LottieAnimation()
         }
 
         Row(
@@ -125,9 +118,11 @@ fun HomeScreen(
             }) {
                 Text(text = stringResource(id = R.string.add_water))
             }
+
             if (uiState.isDialogOpen) {
                 AddWaterDialog(onAction = onAction)
             }
+
             Button(colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = app_color),
                 contentColor = Color.White
@@ -137,18 +132,17 @@ fun HomeScreen(
                 Text(text = stringResource(id = R.string.add_icon))
             }
         }
+
         Spacer(modifier = Modifier.height(24.dp))
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, Color.Gray)
-                .padding(8.dp)
-        ) {
-            items(uiState.waterIntakes) { waterIntake ->
-                Text(text = waterIntake.amount.toString())
-                Text(text = waterIntake.time.orEmpty())
-            }
-        }
+
+        Text(
+            modifier = Modifier.padding(start = 24.dp),
+            text = stringResource(id = R.string.todays_water), fontSize = 24.sp,
+            color = colorResource(id = dark_gray)
+        )
+        WaterGrid(waterIntakes = uiState.waterIntakes, onDeleteClick = {
+            onAction(HomeContract.HomeUiAction.OnClickDeleteWaterIntake(it))
+        })
     }
 }
 
@@ -186,9 +180,45 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
     }
 }
 
+@Composable
+fun WaterGrid(waterIntakes: List<WaterIntake>, onDeleteClick: (WaterIntake) -> Unit) {
+    val scrollState = rememberLazyListState()
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(8.dp)
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .border(
+                width = 4.dp,
+                color = colorResource(id = app_color),
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 12.dp),
+            state = scrollState
+        ) {
+            items(waterIntakes) { waterIntake ->
+                WaterItem(waterIntake = waterIntake, onDeleteClick = {
+                    onDeleteClick(waterIntake)
+                })
+            }
+        }
+    }
+}
 
 @Preview
 @Composable
 fun HomeScreenPreview() {
-
+    HomeScreen(uiState = HomeContract.HomeUiState(),
+        uiEffect = MutableSharedFlow(),
+        onAction = {},
+        onNavigateToProfileScreen = {})
 }

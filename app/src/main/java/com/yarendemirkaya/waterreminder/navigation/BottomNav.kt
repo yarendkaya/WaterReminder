@@ -4,6 +4,7 @@ package com.yarendemirkaya.waterreminder.navigation
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -11,6 +12,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -33,7 +35,9 @@ fun BottomNavigationBar(
 
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     BottomAppBar(
-        modifier = Modifier.fillMaxWidth().border(width = 1.dp, color = colorResource(id = R.color.app_color)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(width = 1.dp, color = colorResource(id = R.color.app_color)),
     ) {
         items.forEach { item ->
             val isSelected = currentDestination?.route == item.route

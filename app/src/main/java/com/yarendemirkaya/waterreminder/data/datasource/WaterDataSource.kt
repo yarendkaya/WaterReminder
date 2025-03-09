@@ -1,6 +1,7 @@
 package com.yarendemirkaya.waterreminder.data.datasource
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yarendemirkaya.waterreminder.common.Resource
 
@@ -8,45 +9,68 @@ import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
+class WaterDataSource @Inject constructor(
+    private val fireStore: FirebaseFirestore,
+    private val auth: FirebaseAuth
+) {
 
-class WaterDataSource @Inject constructor(private val fireStore: FirebaseFirestore) {
+    private val userId: String?
+        get() = auth.currentUser?.uid
 
-    private val currentUser = FirebaseAuth.getInstance().currentUser
-    private val userId = currentUser?.uid.orEmpty()
 
-    private val waterIntakeRef by lazy {
-        if (userId.isEmpty()) {
-            null
-        } else {
-            fireStore.collection("users")
-                .document(userId)
-                .collection("waterIntakes")
-                .document()
-        }
+    private fun getWaterIntakeCollection(): CollectionReference? {
+        val userId = userId ?: return null
+        return fireStore.collection("users")
+            .document(userId)
+            .collection("waterIntakes")
     }
 
-    suspend fun addWaterIntake(waterIntake: WaterIntake) {
-        val waterIntakeData = mapOf(
-            "amount" to waterIntake.amount,
-            "time" to waterIntake.time
-        )
-        waterIntakeRef?.set(waterIntakeData)?.await()
+    suspend fun addWaterIntake(waterIntake: WaterIntake): Resource<Unit> {
+        return try {
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
+
+            val documentRef = collectionRef.document()
+            val waterIntakeWithId = waterIntake.copy(id = documentRef.id)
+
+            documentRef.set(waterIntakeWithId).await()
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Failed to add water intake.")
+        }
     }
 
     suspend fun getWaterIntakes(): Resource<List<WaterIntake>> {
         return try {
-            val waterIntakes = fireStore.collection("users")
-                .document(userId)
-                .collection("waterIntakes")
-                .get()
-                .await()
-                .toObjects(WaterIntake::class.java)
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
+
+            val snapshot = collectionRef.get().await()
+            val waterIntakes = snapshot.toObjects(WaterIntake::class.java)
+
             Resource.Success(waterIntakes)
         } catch (e: Exception) {
-            Resource.Error(e.message ?: "Error fetching water intakes")
+            Resource.Error(e.localizedMessage ?: "Failed to fetch water intakes.")
+        }
+    }
+
+    suspend fun deleteWaterIntake(waterIntake: WaterIntake): Resource<Boolean> {
+        return try {
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
+
+            if (waterIntake.id.isEmpty()) {
+                return Resource.Error("Invalid water intake ID.")
+            }
+
+            collectionRef.document(waterIntake.id).delete().await()
+            Resource.Success(true)
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Failed to delete water intake.")
         }
     }
 }
+
 
 
 

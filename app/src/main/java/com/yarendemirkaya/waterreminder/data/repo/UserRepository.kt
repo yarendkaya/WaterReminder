@@ -24,4 +24,7 @@ class UserRepository @Inject constructor(private val userDataSource: UserDataSou
         userDataSource.updateUserData(user)
     }
 
+    suspend fun getUserName(): Resource<String> {
+        return userDataSource.getUserName()
+    }
 }
