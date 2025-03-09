@@ -34,13 +34,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
 import com.yarendemirkaya.waterreminder.R.color.dark_gray
 import com.yarendemirkaya.waterreminder.R.color.light_background
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
+import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfileDialog
 import com.yarendemirkaya.waterreminder.presentation.home.components.LottieAnimation
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -65,31 +65,7 @@ fun HomeScreen(
     }
 
     if (uiState.showEditDialog) {
-        Dialog(onDismissRequest = { }) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White, shape = RoundedCornerShape(16.dp))
-                    .padding(16.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(fontSize = 18.sp, text = stringResource(id = R.string.edit_profile_dialog))
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Button(
-                        onClick = {
-                            onAction(HomeContract.HomeUiAction.OnClickEditProfile)
-                        }, colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = dark_gray),
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text(text = stringResource(id = R.string.edit_profile_btn))
-                    }
-                }
-            }
-        }
+        EditProfileDialog(onAction = onAction)
     }
 
     Column(
@@ -98,29 +74,30 @@ fun HomeScreen(
             .padding(16.dp)
             .background(color = colorResource(id = light_background))
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, top = 32.dp)
+                .padding(start = 16.dp, top = 32.dp)
                 .background(color = colorResource(id = light_background))
         ) {
             Text(text = stringResource(id = R.string.welcome_back), fontSize = 36.sp)
+            Text(text = uiState.userName, fontSize = 24.sp, color = colorResource(id = dark_gray))
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Box(
-            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LottieAnimation()
             Icon(
                 painter = painterResource(id = R.drawable.ic_alarm),
                 contentDescription = "Icon",
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp),
-                tint = Color.Unspecified,
-            )
+                    .padding(end = 8.dp)
+                    .align(Alignment.End),
+                tint = Color.Unspecified)
+            LottieAnimation()
         }
 
         Row(

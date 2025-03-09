@@ -28,7 +28,7 @@ fun LottieAnimation() {
 
     Box(
         modifier = Modifier
-            .size(250.dp)
+            .size(240.dp)
             .background(colorResource(id = R.color.light_background)),
         contentAlignment = Alignment.Center
     ) {

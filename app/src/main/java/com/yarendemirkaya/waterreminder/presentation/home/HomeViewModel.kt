@@ -114,4 +114,19 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun getUserName(){
+        viewModelScope.launch {
+            when (val result = userRepository.getUserName()) {
+                is Resource.Success -> {
+                    _uiState.update {
+                        it.copy(userName = result.data)
+                    }
+                }
+                is Resource.Error -> {
+                    _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(result.message))
+                }
+            }
+        }
+    }
 }

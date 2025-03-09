@@ -1,13 +1,13 @@
 package com.yarendemirkaya.waterreminder.data.datasource
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yarendemirkaya.waterreminder.common.Resource
 
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-
 
 class WaterDataSource @Inject constructor(
     private val fireStore: FirebaseFirestore,
@@ -18,66 +18,59 @@ class WaterDataSource @Inject constructor(
         get() = auth.currentUser?.uid
 
 
+    private fun getWaterIntakeCollection(): CollectionReference? {
+        val userId = userId ?: return null
+        return fireStore.collection("users")
+            .document(userId)
+            .collection("waterIntakes")
+    }
+
     suspend fun addWaterIntake(waterIntake: WaterIntake): Resource<Unit> {
         return try {
-            val userId = userId ?: return Resource.Error("User not logged in")
-            val waterIntakeRef = fireStore.collection("users")
-                .document(userId)
-                .collection("waterIntakes")
-                .document()
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
 
-            val waterIntakeData = mapOf(
-                "amount" to waterIntake.amount,
-                "time" to waterIntake.time
-            )
+            val documentRef = collectionRef.document()
+            val waterIntakeWithId = waterIntake.copy(id = documentRef.id)
 
-            waterIntakeRef.set(waterIntakeData).await()
+            documentRef.set(waterIntakeWithId).await()
             Resource.Success(Unit)
         } catch (e: Exception) {
-            Resource.Error(e.localizedMessage ?: "Error adding water intake")
+            Resource.Error(e.localizedMessage ?: "Failed to add water intake.")
         }
     }
 
     suspend fun getWaterIntakes(): Resource<List<WaterIntake>> {
         return try {
-            val userId = userId ?: return Resource.Error("User not logged in")
-            val snapshot = fireStore.collection("users")
-                .document(userId)
-                .collection("waterIntakes")
-                .get()
-                .await()
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
 
-            val waterIntakes = snapshot.documents.map { document ->
-                document.toObject(WaterIntake::class.java)?.copy(id = document.id)
-            }.filterNotNull()
+            val snapshot = collectionRef.get().await()
+            val waterIntakes = snapshot.toObjects(WaterIntake::class.java)
 
             Resource.Success(waterIntakes)
         } catch (e: Exception) {
-            Resource.Error(e.localizedMessage ?: "Error fetching water intakes")
+            Resource.Error(e.localizedMessage ?: "Failed to fetch water intakes.")
         }
     }
 
     suspend fun deleteWaterIntake(waterIntake: WaterIntake): Resource<Boolean> {
         return try {
-            val userId = userId ?: return Resource.Error("User not logged in")
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
 
             if (waterIntake.id.isEmpty()) {
-                return Resource.Error("Water intake ID is missing")
+                return Resource.Error("Invalid water intake ID.")
             }
 
-            fireStore.collection("users")
-                .document(userId)
-                .collection("waterIntakes")
-                .document(waterIntake.id)
-                .delete()
-                .await()
-
+            collectionRef.document(waterIntake.id).delete().await()
             Resource.Success(true)
         } catch (e: Exception) {
-            Resource.Error(e.localizedMessage ?: "Error deleting water intake")
+            Resource.Error(e.localizedMessage ?: "Failed to delete water intake.")
         }
     }
 }
+
 
 
 

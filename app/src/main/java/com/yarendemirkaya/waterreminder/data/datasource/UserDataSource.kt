@@ -85,4 +85,14 @@ class UserDataSource @Inject constructor(
             Resource.Error(e.localizedMessage ?: "Failed to update user data")
         }
     }
+
+    suspend fun getUserName(): Resource<String> {
+       return try {
+           val result = fireStore.collection("users").document(currentUser?.uid!!).get().await()
+           val name = result.getString("name")
+           Resource.Success(name ?: "")
+       } catch (e: Exception) {
+           Resource.Error(e.localizedMessage ?: "Failed to get user name")
+       }
+    }
 }

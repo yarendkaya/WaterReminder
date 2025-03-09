@@ -11,6 +11,7 @@ object HomeContract {
         val isDialogOpen: Boolean = false,
         var showEditDialog: Boolean = false,
         val isAddedInfo: Boolean = false,
+        val userName: String = ""
     )
 
     sealed class HomeUiAction {
