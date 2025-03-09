@@ -23,9 +23,7 @@ fun LottieAnimation() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.home_animation))
     val progress by animateLottieCompositionAsState(
         composition,
-        iterations = LottieConstants.IterateForever
-    )
-
+        iterations = LottieConstants.IterateForever)
     Box(
         modifier = Modifier
             .size(240.dp)

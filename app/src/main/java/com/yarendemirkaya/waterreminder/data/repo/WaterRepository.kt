@@ -15,5 +15,4 @@ class WaterRepository @Inject constructor(private val waterDataSource: WaterData
     suspend fun deleteWaterIntake(waterIntake: WaterIntake) :Resource<Boolean> {
         return waterDataSource.deleteWaterIntake(waterIntake)
     }
-
 }

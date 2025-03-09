@@ -187,7 +187,7 @@ fun WaterGrid(waterIntakes: List<WaterIntake>, onDeleteClick: (WaterIntake) -> U
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(300.dp)
             .padding(8.dp)
             .background(
                 color = Color.White,
