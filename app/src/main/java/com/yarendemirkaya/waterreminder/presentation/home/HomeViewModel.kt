@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.yarendemirkaya.waterreminder.common.Resource
-import com.yarendemirkaya.waterreminder.common.toFormattedDate
+import com.yarendemirkaya.waterreminder.common.toFormattedTime
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.data.repo.UserRepository
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
@@ -70,7 +70,7 @@ class HomeViewModel @Inject constructor(
                 is Resource.Success -> {
                     val updatedWaterIntakes = waterIntakes.data.map {
                         it.copy(
-                            time = it.time?.toLongOrNull()?.toFormattedDate("dd/MM/yyyy")
+                            time = it.time?.toLongOrNull()?.toFormattedTime("HH:mm")
                         )
                     }
                     _uiState.value = _uiState.value.copy(waterIntakes = updatedWaterIntakes)
