@@ -26,7 +26,6 @@ import com.yarendemirkaya.waterreminder.presentation.intro.IntroViewModel
 import com.yarendemirkaya.waterreminder.presentation.login.LoginContract
 import com.yarendemirkaya.waterreminder.presentation.login.LoginScreen
 import com.yarendemirkaya.waterreminder.presentation.login.LoginViewModel
-import com.yarendemirkaya.waterreminder.presentation.profile.ProfileContract
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileScreen
 import com.yarendemirkaya.waterreminder.presentation.profile.ProfileViewModel
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
@@ -83,7 +82,7 @@ fun Navigation(navController: NavHostController) {
 
             LaunchedEffect(uiEffect, lifecycleOwner) {
                 lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.getWaterIntakes()
+                    uiState.waterIntake.time?.let { viewModel.getTodayIntakeByTime() }
                     viewModel.checkUserHasData()
                     viewModel.getUserName()
                 }

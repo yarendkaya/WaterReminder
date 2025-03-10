@@ -44,7 +44,7 @@ fun WaterItem(waterIntake: WaterIntake, onDeleteClick: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = waterIntake.time.orEmpty(),
+            text = waterIntake.time.toString(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
