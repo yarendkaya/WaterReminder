@@ -47,7 +47,7 @@ import com.yarendemirkaya.waterreminder.R.color.light_background
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfileDialog
-import com.yarendemirkaya.waterreminder.presentation.home.components.LottieAnimation
+import com.yarendemirkaya.waterreminder.presentation.home.components.WaterIntakeProgressBar
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -65,7 +65,6 @@ fun HomeScreen(
             is HomeContract.HomeUiEffect.NavigateToProfile -> {
                 onNavigateToProfileScreen()
             }
-
             is HomeContract.HomeUiEffect.ShowToast -> {}
         }
     }
@@ -92,6 +91,8 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        Text(text=uiState.percentOfSuccess.toString(), fontSize = 24.sp, color = colorResource(id = dark_gray))
+
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -104,7 +105,8 @@ fun HomeScreen(
                     .align(Alignment.End),
                 tint = Color.Unspecified
             )
-            LottieAnimation()
+//            LottieAnimation()
+            WaterIntakeProgressBar(successPercentage = uiState.percentOfSuccess.toFloat())
         }
 
         Row(
@@ -171,7 +173,7 @@ fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth().background(colorResource(id = light_background))
+                modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
                     value = amount,

@@ -144,8 +144,10 @@ class HomeViewModel @Inject constructor(
                         )
                     }.sortedBy { it.time }
                     _uiState.update {
-                        it.copy(waterIntakes = updatedWaterIntakes)
+                        it.copy(waterIntakes = updatedWaterIntakes,
+                            dailyIntake = updatedWaterIntakes.sumOf { it.amount },)
                     }
+                    fetchPercentOfSuccess()
                 }
 
                 is Resource.Error -> {
@@ -153,5 +155,13 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-    } 
+    }
+
+    private fun fetchPercentOfSuccess(){
+        val goal=2000
+        val percentOfSuccess= _uiState.value.dailyIntake*100/goal
+        _uiState.update {
+            it.copy(percentOfSuccess = percentOfSuccess)
+        }
+    }
 }
