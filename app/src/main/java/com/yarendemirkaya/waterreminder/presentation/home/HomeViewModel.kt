@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.yarendemirkaya.waterreminder.common.Resource
-import com.yarendemirkaya.waterreminder.common.toFormattedDate
 import com.yarendemirkaya.waterreminder.common.toFormattedTime
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.data.repo.UserRepository
@@ -143,7 +142,7 @@ class HomeViewModel @Inject constructor(
                         it.copy(
                            time = it.time?.toLongOrNull()?.toFormattedTime("HH:mm")
                         )
-                    }
+                    }.sortedBy { it.time }
                     _uiState.update {
                         it.copy(waterIntakes = updatedWaterIntakes)
                     }
@@ -154,5 +153,5 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-    }
+    } 
 }
