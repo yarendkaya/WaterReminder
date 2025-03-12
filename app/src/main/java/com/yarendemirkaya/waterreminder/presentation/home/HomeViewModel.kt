@@ -39,11 +39,11 @@ class HomeViewModel @Inject constructor(
                 is HomeContract.HomeUiAction.OnClickAddWaterIntake -> addWaterIntake(action.waterIntake)
 
                 is HomeContract.HomeUiAction.OnClickOpenDialog -> _uiState.update {
-                    it.copy(isDialogOpen = true)
+                    it.copy(isAddWaterDialogOpen = true)
                 }
 
                 is HomeContract.HomeUiAction.OnClickCloseDialog -> _uiState.update {
-                    it.copy(isDialogOpen = false)
+                    it.copy(isAddWaterDialogOpen = false)
                 }
 
                 is HomeContract.HomeUiAction.OnClickEditProfile -> {
@@ -52,6 +52,17 @@ class HomeViewModel @Inject constructor(
 
                 is HomeContract.HomeUiAction.OnClickDeleteWaterIntake -> {
                     deleteWaterIntake(action.waterIntake)
+                }
+
+                is HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog -> {
+                    _uiState.update {
+                        it.copy(showSetReminderDialog = true)
+                    }
+                }
+                is HomeContract.HomeUiAction.OnClickCloseSetReminderDialog -> {
+                    _uiState.update {
+                        it.copy(showSetReminderDialog = false)
+                    }
                 }
             }
         }
@@ -140,12 +151,14 @@ class HomeViewModel @Inject constructor(
                 is Resource.Success -> {
                     val updatedWaterIntakes = waterIntakes.data.map {
                         it.copy(
-                           time = it.time?.toLongOrNull()?.toFormattedTime("HH:mm")
+                            time = it.time?.toLongOrNull()?.toFormattedTime("HH:mm")
                         )
                     }.sortedBy { it.time }
                     _uiState.update {
-                        it.copy(waterIntakes = updatedWaterIntakes,
-                            dailyIntake = updatedWaterIntakes.sumOf { it.amount },)
+                        it.copy(
+                            waterIntakes = updatedWaterIntakes,
+                            dailyIntake = updatedWaterIntakes.sumOf { it.amount },
+                        )
                     }
                     fetchPercentOfSuccess()
                 }
@@ -157,9 +170,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun fetchPercentOfSuccess(){
-        val goal=2000
-        val percentOfSuccess= _uiState.value.dailyIntake*100/goal
+    private fun fetchPercentOfSuccess() {
+        val goal = 2000
+        val percentOfSuccess = _uiState.value.dailyIntake * 100 / goal
         _uiState.update {
             it.copy(percentOfSuccess = percentOfSuccess)
         }

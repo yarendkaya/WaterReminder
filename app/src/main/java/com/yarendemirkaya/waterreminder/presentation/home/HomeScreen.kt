@@ -2,6 +2,7 @@ package com.yarendemirkaya.waterreminder.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import com.yarendemirkaya.waterreminder.R.color.light_background
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfileDialog
+import com.yarendemirkaya.waterreminder.presentation.home.components.SetReminderDialog
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterIntakeProgressBar
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
 import kotlinx.coroutines.flow.Flow
@@ -65,6 +67,7 @@ fun HomeScreen(
             is HomeContract.HomeUiEffect.NavigateToProfile -> {
                 onNavigateToProfileScreen()
             }
+
             is HomeContract.HomeUiEffect.ShowToast -> {}
         }
     }
@@ -95,12 +98,19 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (uiState.showSetReminderDialog) {
+                SetReminderDialog(onDismiss = {
+                    onAction(HomeContract.HomeUiAction.OnClickCloseSetReminderDialog)
+                },
+                    onConfirm = { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) })
+            }
             Icon(
                 painter = painterResource(id = R.drawable.ic_alarm),
                 contentDescription = "Icon",
                 modifier = Modifier
                     .padding(end = 8.dp)
-                    .align(Alignment.End),
+                    .align(Alignment.End)
+                    .clickable { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) },
                 tint = Color.Unspecified
             )
 //            LottieAnimation()
@@ -126,7 +136,7 @@ fun HomeScreen(
                 Text(text = stringResource(id = R.string.add_water))
             }
 
-            if (uiState.isDialogOpen) {
+            if (uiState.isAddWaterDialogOpen) {
                 AddWaterDialog(onAction = onAction)
             }
 
