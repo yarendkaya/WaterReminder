@@ -2,6 +2,7 @@ package com.yarendemirkaya.waterreminder.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +16,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,7 +48,8 @@ import com.yarendemirkaya.waterreminder.R.color.light_background
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfileDialog
-import com.yarendemirkaya.waterreminder.presentation.home.components.LottieAnimation
+import com.yarendemirkaya.waterreminder.presentation.home.components.SetReminderDialog
+import com.yarendemirkaya.waterreminder.presentation.home.components.WaterIntakeProgressBar
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -90,16 +98,25 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (uiState.showSetReminderDialog) {
+                SetReminderDialog(onDismiss = {
+                    onAction(HomeContract.HomeUiAction.OnClickCloseSetReminderDialog)
+                },
+                    onConfirm = { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) })
+            }
             Icon(
                 painter = painterResource(id = R.drawable.ic_alarm),
                 contentDescription = "Icon",
                 modifier = Modifier
                     .padding(end = 8.dp)
-                    .align(Alignment.End),
-                tint = Color.Unspecified)
-            LottieAnimation()
+                    .align(Alignment.End)
+                    .clickable { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) },
+                tint = Color.Unspecified
+            )
+//            LottieAnimation()
+            WaterIntakeProgressBar(successPercentage = uiState.percentOfSuccess.toFloat())
         }
-
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -119,7 +136,7 @@ fun HomeScreen(
                 Text(text = stringResource(id = R.string.add_water))
             }
 
-            if (uiState.isDialogOpen) {
+            if (uiState.isAddWaterDialogOpen) {
                 AddWaterDialog(onAction = onAction)
             }
 
@@ -149,36 +166,72 @@ fun HomeScreen(
 
 @Composable
 fun AddWaterDialog(onAction: (HomeContract.HomeUiAction) -> Unit) {
-    Column {
-        var amount by remember { mutableStateOf("") }
-        TextField(
-            value = amount,
-            onValueChange = {
-                amount = it
-            },
-            label = { Text(text = "Amount") }
-        )
-        Row {
-            Button(onClick = {
-                onAction(
-                    HomeContract.HomeUiAction.OnClickAddWaterIntake(
-                        WaterIntake(
-                            amount = amount.toIntOrNull() ?: 0,
-                            time = System.currentTimeMillis().toString()
+    var amount by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = {
+            onAction(HomeContract.HomeUiAction.OnClickCloseDialog)
+        },
+        title = {
+            Text(
+                text = "Add Water Intake",
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    label = { Text(text = "Amount (ml)") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            ElevatedButton(
+                onClick = {
+                    onAction(
+                        HomeContract.HomeUiAction.OnClickAddWaterIntake(
+                            WaterIntake(
+                                amount = amount.toIntOrNull() ?: 0,
+                                time = System.currentTimeMillis().toString()
+                            )
                         )
                     )
+                    onAction(HomeContract.HomeUiAction.OnClickCloseDialog)
+                },
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = app_color),
+                    contentColor = Color.White
                 )
-            }) {
-                Text(text = "Add")
+            ) {
+                Text(text = "Add", style = MaterialTheme.typography.labelLarge)
             }
-            Button(onClick = {
-                onAction(HomeContract.HomeUiAction.OnClickCloseDialog)
-            }) {
-                Text(text = "Close")
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onAction(HomeContract.HomeUiAction.OnClickCloseDialog)
+                },
+                colors = ButtonDefaults.textButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = colorResource(id = app_color)
+                )
+            ) {
+                Text(text = "Close", style = MaterialTheme.typography.labelLarge)
             }
         }
-    }
+    )
 }
+
 
 @Composable
 fun WaterGrid(waterIntakes: List<WaterIntake>, onDeleteClick: (WaterIntake) -> Unit) {
@@ -187,7 +240,7 @@ fun WaterGrid(waterIntakes: List<WaterIntake>, onDeleteClick: (WaterIntake) -> U
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(350.dp)
             .padding(8.dp)
             .background(
                 color = Color.White,

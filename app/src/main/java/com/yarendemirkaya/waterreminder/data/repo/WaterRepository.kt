@@ -10,9 +10,14 @@ class WaterRepository @Inject constructor(private val waterDataSource: WaterData
     suspend fun addWaterIntake(water: WaterIntake) = waterDataSource.addWaterIntake(water)
 
     suspend fun getWaterIntakes(): Resource<List<WaterIntake>> {
-        return  waterDataSource.getWaterIntakes()
+        return waterDataSource.getTodayIntakeByTime()
     }
-    suspend fun deleteWaterIntake(waterIntake: WaterIntake) :Resource<Boolean> {
+
+    suspend fun deleteWaterIntake(waterIntake: WaterIntake): Resource<Boolean> {
         return waterDataSource.deleteWaterIntake(waterIntake)
+    }
+
+    suspend fun getTodayIntakeByTime(): Resource<List<WaterIntake>> {
+        return waterDataSource.getTodayIntakeByTime()
     }
 }

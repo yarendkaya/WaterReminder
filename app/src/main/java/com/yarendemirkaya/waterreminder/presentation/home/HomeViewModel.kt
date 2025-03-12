@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.yarendemirkaya.waterreminder.common.Resource
-import com.yarendemirkaya.waterreminder.common.toFormattedDate
+import com.yarendemirkaya.waterreminder.common.toFormattedTime
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.data.repo.UserRepository
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
@@ -39,11 +39,11 @@ class HomeViewModel @Inject constructor(
                 is HomeContract.HomeUiAction.OnClickAddWaterIntake -> addWaterIntake(action.waterIntake)
 
                 is HomeContract.HomeUiAction.OnClickOpenDialog -> _uiState.update {
-                    it.copy(isDialogOpen = true)
+                    it.copy(isAddWaterDialogOpen = true)
                 }
 
                 is HomeContract.HomeUiAction.OnClickCloseDialog -> _uiState.update {
-                    it.copy(isDialogOpen = false)
+                    it.copy(isAddWaterDialogOpen = false)
                 }
 
                 is HomeContract.HomeUiAction.OnClickEditProfile -> {
@@ -53,6 +53,17 @@ class HomeViewModel @Inject constructor(
                 is HomeContract.HomeUiAction.OnClickDeleteWaterIntake -> {
                     deleteWaterIntake(action.waterIntake)
                 }
+
+                is HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog -> {
+                    _uiState.update {
+                        it.copy(showSetReminderDialog = true)
+                    }
+                }
+                is HomeContract.HomeUiAction.OnClickCloseSetReminderDialog -> {
+                    _uiState.update {
+                        it.copy(showSetReminderDialog = false)
+                    }
+                }
             }
         }
     }
@@ -60,7 +71,7 @@ class HomeViewModel @Inject constructor(
     private fun addWaterIntake(water: WaterIntake) {
         viewModelScope.launch {
             waterRepository.addWaterIntake(water)
-            getWaterIntakes()
+            getTodayIntakeByTime()
         }
     }
 
@@ -70,10 +81,12 @@ class HomeViewModel @Inject constructor(
                 is Resource.Success -> {
                     val updatedWaterIntakes = waterIntakes.data.map {
                         it.copy(
-                            time = it.time?.toLongOrNull()?.toFormattedDate("dd/MM/yyyy")
+                            time = it.time?.toLongOrNull()?.toFormattedTime("HH:mm")
                         )
                     }
-                    _uiState.value = _uiState.value.copy(waterIntakes = updatedWaterIntakes)
+                    _uiState.update {
+                        it.copy(waterIntakes = updatedWaterIntakes)
+                    }
                 }
 
                 is Resource.Error -> {
@@ -109,13 +122,13 @@ class HomeViewModel @Inject constructor(
     private fun deleteWaterIntake(waterIntake: WaterIntake) {
         viewModelScope.launch {
             when (val result = waterRepository.deleteWaterIntake(waterIntake)) {
-                is Resource.Success -> getWaterIntakes()
+                is Resource.Success -> getTodayIntakeByTime()
                 is Resource.Error -> _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(result.message))
             }
         }
     }
 
-    fun getUserName(){
+    fun getUserName() {
         viewModelScope.launch {
             when (val result = userRepository.getUserName()) {
                 is Resource.Success -> {
@@ -123,10 +136,45 @@ class HomeViewModel @Inject constructor(
                         it.copy(userName = result.data)
                     }
                 }
+
                 is Resource.Error -> {
                     _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(result.message))
                 }
             }
+        }
+    }
+
+
+    fun getTodayIntakeByTime() {
+        viewModelScope.launch {
+            when (val waterIntakes = waterRepository.getTodayIntakeByTime()) {
+                is Resource.Success -> {
+                    val updatedWaterIntakes = waterIntakes.data.map {
+                        it.copy(
+                            time = it.time?.toLongOrNull()?.toFormattedTime("HH:mm")
+                        )
+                    }.sortedBy { it.time }
+                    _uiState.update {
+                        it.copy(
+                            waterIntakes = updatedWaterIntakes,
+                            dailyIntake = updatedWaterIntakes.sumOf { it.amount },
+                        )
+                    }
+                    fetchPercentOfSuccess()
+                }
+
+                is Resource.Error -> {
+                    _uiEffect.emit(HomeContract.HomeUiEffect.ShowToast(waterIntakes.message))
+                }
+            }
+        }
+    }
+
+    private fun fetchPercentOfSuccess() {
+        val goal = 2000
+        val percentOfSuccess = _uiState.value.dailyIntake * 100 / goal
+        _uiState.update {
+            it.copy(percentOfSuccess = percentOfSuccess)
         }
     }
 }

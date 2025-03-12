@@ -8,10 +8,14 @@ object HomeContract {
         val isLoggedIn: Boolean = false,
         val waterIntakes: List<WaterIntake> = emptyList(),
         val waterIntake: WaterIntake = WaterIntake(),
-        val isDialogOpen: Boolean = false,
+        val isAddWaterDialogOpen: Boolean = false,
         var showEditDialog: Boolean = false,
         val isAddedInfo: Boolean = false,
-        val userName: String = ""
+        val userName: String = "",
+        val dailyIntake: Int = 0,
+        val dailyGoal: Int = 0,
+        val percentOfSuccess: Int = 0,
+        val showSetReminderDialog: Boolean = false
     )
 
     sealed class HomeUiAction {
@@ -20,6 +24,8 @@ object HomeContract {
         data object OnClickOpenDialog : HomeUiAction()
         data object OnClickCloseDialog : HomeUiAction()
         data object OnClickEditProfile : HomeUiAction()
+        data object OnCLickOpenSetReminderDialog : HomeUiAction()
+        data object OnClickCloseSetReminderDialog : HomeUiAction()
 
     }
 
