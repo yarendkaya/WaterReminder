@@ -91,8 +91,6 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text(text=uiState.percentOfSuccess.toString(), fontSize = 24.sp, color = colorResource(id = dark_gray))
-
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -108,7 +106,7 @@ fun HomeScreen(
 //            LottieAnimation()
             WaterIntakeProgressBar(successPercentage = uiState.percentOfSuccess.toFloat())
         }
-
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly

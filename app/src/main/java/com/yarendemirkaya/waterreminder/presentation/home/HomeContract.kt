@@ -13,6 +13,7 @@ object HomeContract {
         val isAddedInfo: Boolean = false,
         val userName: String = "",
         val dailyIntake: Int = 0,
+        val dailyGoal: Int = 0,
         val percentOfSuccess: Int = 0
     )
 
