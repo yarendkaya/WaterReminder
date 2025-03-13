@@ -114,7 +114,8 @@ fun HomeScreen(
                 tint = Color.Unspecified
             )
 //            LottieAnimation()
-            WaterIntakeProgressBar(successPercentage = uiState.percentOfSuccess.toFloat())
+            WaterIntakeProgressBar(successPercentage =
+                uiState.percentOfSuccess.toFloat())
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
