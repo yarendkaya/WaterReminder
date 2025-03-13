@@ -1,53 +1,46 @@
 package com.yarendemirkaya.waterreminder.presentation.home.components
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.yarendemirkaya.waterreminder.R
 
 @Composable
 fun WaterIntakeProgressBar(successPercentage: Float) {
-    val gradientColors = listOf(Color(0xFF64B5F6),
-        Color(0xFF1976D2),
-        Color(0xFF0D47A1),
-        Color(0xFF0D47A1))
-    val strokeWidth = 12.dp
+    val animatedProgress by animateFloatAsState(
+        targetValue = successPercentage/100 ,
+        animationSpec = tween(durationMillis = 2000, easing = FastOutSlowInEasing),
+        label = "progress_animation"
+    )
+
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.progress_animation)
+    )
 
     Box(
-        modifier = Modifier.size(160.dp),
+        modifier = Modifier.size(180.dp),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(
-            progress = { 1f },
-            modifier = Modifier.size(160.dp),
-            color = Color.Gray.copy(alpha = 0.2f),
-            strokeWidth = strokeWidth,
-            trackColor = ProgressIndicatorDefaults.circularIndeterminateTrackColor,
+        LottieAnimation(
+            composition = composition,
+            progress = { animatedProgress/2},
+            modifier = Modifier.size(160.dp)
         )
-
-        Canvas(modifier = Modifier.size(160.dp)) {
-            drawArc(
-                brush = Brush.linearGradient(gradientColors),
-                startAngle = -90f,
-                sweepAngle = 360 * successPercentage/100,
-                useCenter = false,
-                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
-            )
-        }
 
         Text(
             text = "${successPercentage.toInt()}%",
@@ -57,6 +50,9 @@ fun WaterIntakeProgressBar(successPercentage: Float) {
         )
     }
 }
+
+
+
 
 
 @Preview
