@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yarendemirkaya.waterreminder.common.Resource
+import com.yarendemirkaya.waterreminder.common.getWeekMillisRange
 import com.yarendemirkaya.waterreminder.common.toFormattedDate
 
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
@@ -66,6 +67,7 @@ class WaterDataSource @Inject constructor(
             }
 
             collectionRef.document(waterIntake.id).delete().await()
+
             Resource.Success(true)
         } catch (e: Exception) {
             Resource.Error(e.localizedMessage ?: "Failed to delete water intake.")
@@ -85,7 +87,6 @@ class WaterDataSource @Inject constructor(
                 val timeLong = it.time?.toLongOrNull()
                 timeLong != null && timeLong in startOfDay..endOfDay
             }
-
             Resource.Success(waterIntakes)
 
         } catch (e: Exception) {
@@ -93,20 +94,39 @@ class WaterDataSource @Inject constructor(
         }
     }
 
+    suspend fun getWeeklyIntakeByTime(): Resource<List<WaterIntake>> {
+        return try {
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
 
+            val (startOfWeek, endOfWeek) = getWeekMillisRange()
+
+            val snapshot = collectionRef.get().await()
+
+            val waterIntakes = snapshot.toObjects(WaterIntake::class.java).filter {
+                val timeLong = it.time?.toLongOrNull()
+                timeLong != null && timeLong in startOfWeek..endOfWeek
+            }
+
+            Resource.Success(waterIntakes)
+
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Failed to fetch this week's water intakes.")
+        }
+    }
 }
 
 fun getTodayMillisRange(): Pair<Long, Long> {
     val calendar = Calendar.getInstance()
 
-    // Bugünün 00:00:00 milisaniyesini al
+
     calendar.set(Calendar.HOUR_OF_DAY, 0)
     calendar.set(Calendar.MINUTE, 0)
     calendar.set(Calendar.SECOND, 0)
     calendar.set(Calendar.MILLISECOND, 0)
     val startOfDay = calendar.timeInMillis
 
-    // Bugünün 23:59:59 milisaniyesini al
+
     calendar.set(Calendar.HOUR_OF_DAY, 23)
     calendar.set(Calendar.MINUTE, 59)
     calendar.set(Calendar.SECOND, 59)

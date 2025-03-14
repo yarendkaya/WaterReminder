@@ -20,4 +20,8 @@ class WaterRepository @Inject constructor(private val waterDataSource: WaterData
     suspend fun getTodayIntakeByTime(): Resource<List<WaterIntake>> {
         return waterDataSource.getTodayIntakeByTime()
     }
+
+    suspend fun getWeeklyIntakeByTime(): Resource<List<WaterIntake>> {
+        return waterDataSource.getWeeklyIntakeByTime()
+    }
 }

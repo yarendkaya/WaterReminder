@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            val visibleList = listOf("profile", "home",)
+            val visibleList = listOf("profile", "home","statistics","settings")
             val bottomBarVisibility =
                 navController.currentBackStackEntryAsState().value?.destination?.route in visibleList
 
