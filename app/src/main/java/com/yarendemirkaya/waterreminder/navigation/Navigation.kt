@@ -34,6 +34,7 @@ import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
 import com.yarendemirkaya.waterreminder.presentation.splash.SplashScreen
 import com.yarendemirkaya.waterreminder.presentation.splash.SplashViewModel
 import com.yarendemirkaya.waterreminder.presentation.statistics.StatisticsViewPager
+import com.yarendemirkaya.waterreminder.presentation.statistics.monthly.MonthlyStatisticsViewModel
 import com.yarendemirkaya.waterreminder.presentation.statistics.weekly.WeeklyStatisticsViewModel
 
 
@@ -211,9 +212,18 @@ fun Navigation(navController: NavHostController) {
         composable("statistics") {
             val viewModel: WeeklyStatisticsViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            StatisticsViewPager( weeklyStatisticsUiState = uiState)
+
+            val monthlyViewModel: MonthlyStatisticsViewModel = hiltViewModel()
+            val monthlyUiState by monthlyViewModel.uiState.collectAsStateWithLifecycle()
+
+
+            StatisticsViewPager(
+                weeklyStatisticsUiState = uiState,
+                monthlyStatisticsUiState = monthlyUiState
+            )
             LaunchedEffect(Unit) {
                 viewModel.getWeeklyIntakeByTime()
+                monthlyViewModel.getMonthlyIntakeByTime()
             }
         }
     }

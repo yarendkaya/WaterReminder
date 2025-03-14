@@ -114,6 +114,35 @@ class WaterDataSource @Inject constructor(
             Resource.Error(e.localizedMessage ?: "Failed to fetch this week's water intakes.")
         }
     }
+
+    suspend fun getMonthlyIntakeByTime(): Resource<List<WaterIntake>> {
+        return try {
+            val collectionRef = getWaterIntakeCollection()
+                ?: return Resource.Error("User not logged in")
+
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+
+            calendar.set(year, month, 1, 0, 0, 0)
+            val startOfMonth = calendar.timeInMillis
+
+            calendar.set(year, month, calendar.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59)
+            val endOfMonth = calendar.timeInMillis
+
+            val snapshot = collectionRef.get().await()
+
+            val waterIntakes = snapshot.toObjects(WaterIntake::class.java).filter {
+                val timeLong = it.time?.toLongOrNull()
+                timeLong != null && timeLong in startOfMonth..endOfMonth
+            }
+
+            Resource.Success(waterIntakes)
+
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Failed to fetch this month's water intakes.")
+        }
+    }
 }
 
 fun getTodayMillisRange(): Pair<Long, Long> {

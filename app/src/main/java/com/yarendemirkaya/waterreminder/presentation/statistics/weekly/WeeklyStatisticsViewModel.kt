@@ -15,11 +15,9 @@ import javax.inject.Inject
 class WeeklyStatisticsViewModel @Inject constructor(private val repository: WaterRepository) :
     ViewModel() {
 
-
     private val _uiState = MutableStateFlow(WeeklyStatisticsContract.WeeklyStatisticsUiState())
     val uiState: StateFlow<WeeklyStatisticsContract.WeeklyStatisticsUiState> =
         _uiState.asStateFlow()
-
 
 
 
@@ -29,12 +27,8 @@ class WeeklyStatisticsViewModel @Inject constructor(private val repository: Wate
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(weeklyIntake = result.data)
                 }
-
-                is Resource.Error -> {
-
-                }
+                is Resource.Error -> {}
             }
         }
     }
-
 }

@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yarendemirkaya.waterreminder.presentation.statistics.monthly.MonthlyStatisticsContract
 import com.yarendemirkaya.waterreminder.presentation.statistics.monthly.MonthlyStatisticsScreen
@@ -24,6 +23,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun StatisticsViewPager(
     weeklyStatisticsUiState: WeeklyStatisticsContract.WeeklyStatisticsUiState,
+    monthlyStatisticsUiState: MonthlyStatisticsContract.MonthlyStatisticsUiState
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
@@ -47,7 +47,7 @@ fun StatisticsViewPager(
         HorizontalPager(state = pagerState, userScrollEnabled = true) { page ->
             when (page) {
                 0 -> WeeklyStatisticsScreen(uiState = weeklyStatisticsUiState)
-                1 -> MonthlyStatisticsScreen()
+                1 -> MonthlyStatisticsScreen(uiState = monthlyStatisticsUiState)
             }
         }
     }
