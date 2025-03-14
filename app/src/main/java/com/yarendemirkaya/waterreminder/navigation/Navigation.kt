@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,6 +33,9 @@ import com.yarendemirkaya.waterreminder.presentation.register.RegisterScreen
 import com.yarendemirkaya.waterreminder.presentation.register.RegisterViewModel
 import com.yarendemirkaya.waterreminder.presentation.splash.SplashScreen
 import com.yarendemirkaya.waterreminder.presentation.splash.SplashViewModel
+import com.yarendemirkaya.waterreminder.presentation.statistics.StatisticsViewPager
+import com.yarendemirkaya.waterreminder.presentation.statistics.monthly.MonthlyStatisticsViewModel
+import com.yarendemirkaya.waterreminder.presentation.statistics.weekly.WeeklyStatisticsViewModel
 
 
 @Composable
@@ -203,6 +207,24 @@ fun Navigation(navController: NavHostController) {
                     navController.navigate("home")
                 }
             )
+        }
+
+        composable("statistics") {
+            val viewModel: WeeklyStatisticsViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            val monthlyViewModel: MonthlyStatisticsViewModel = hiltViewModel()
+            val monthlyUiState by monthlyViewModel.uiState.collectAsStateWithLifecycle()
+
+
+            StatisticsViewPager(
+                weeklyStatisticsUiState = uiState,
+                monthlyStatisticsUiState = monthlyUiState
+            )
+            LaunchedEffect(Unit) {
+                viewModel.getWeeklyIntakeByTime()
+                monthlyViewModel.getMonthlyIntakeByTime()
+            }
         }
     }
 }
