@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.plugin)
     alias(libs.plugins.google.services)
-
 }
 
 android {
@@ -85,5 +84,8 @@ dependencies {
     implementation(libs.gson)
 
     implementation (libs.lottie.compose)
+
+    implementation (libs.accompanist.pager)
+    implementation (libs.accompanist.pager.indicators)
 
 }
