@@ -23,7 +23,7 @@ class WeeklyStatisticsViewModel @Inject constructor(private val repository: Wate
 
     fun getWeeklyIntakeByTime() {
         viewModelScope.launch {
-            when (val result = repository.getWeeklyIntakeByTime()) {
+            when (val result = repository.getLast7DaysWaterIntake()) {
                 is Resource.Success -> {
                     _uiState.value = _uiState.value.copy(weeklyIntake = result.data)
                 }

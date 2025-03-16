@@ -113,7 +113,7 @@ fun HomeScreen(
                     .clickable { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) },
                 tint = Color.Unspecified
             )
-//            LottieAnimation()
+
             WaterIntakeProgressBar(successPercentage =
                 uiState.percentOfSuccess.toFloat())
         }

@@ -1,5 +1,6 @@
 package com.yarendemirkaya.waterreminder.data.datasource
 
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,7 +10,10 @@ import com.yarendemirkaya.waterreminder.common.toFormattedDate
 
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class WaterDataSource @Inject constructor(
@@ -94,26 +98,24 @@ class WaterDataSource @Inject constructor(
         }
     }
 
-    suspend fun getWeeklyIntakeByTime(): Resource<List<WaterIntake>> {
+    suspend fun getLast7DaysWaterIntake(): Resource<List<WaterIntake>> {
         return try {
+            val sevenDaysAgo = Timestamp.now().seconds - (7 * 24 * 60 * 60)
             val collectionRef = getWaterIntakeCollection()
                 ?: return Resource.Error("User not logged in")
 
-            val (startOfWeek, endOfWeek) = getWeekMillisRange()
-
             val snapshot = collectionRef.get().await()
-
             val waterIntakes = snapshot.toObjects(WaterIntake::class.java).filter {
                 val timeLong = it.time?.toLongOrNull()
-                timeLong != null && timeLong in startOfWeek..endOfWeek
+                timeLong != null && timeLong >= sevenDaysAgo
             }
-
             Resource.Success(waterIntakes)
 
         } catch (e: Exception) {
-            Resource.Error(e.localizedMessage ?: "Failed to fetch this week's water intakes.")
+            Resource.Error(e.localizedMessage ?: "Failed to fetch last 7 days water intakes.")
         }
     }
+
 
     suspend fun getMonthlyIntakeByTime(): Resource<List<WaterIntake>> {
         return try {
