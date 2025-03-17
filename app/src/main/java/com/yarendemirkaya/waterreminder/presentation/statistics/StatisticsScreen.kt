@@ -58,3 +58,61 @@ fun StatisticsViewPager(
 //fun StatisticsViewPagerPreview() {
 //    StatisticsViewPager()
 //}
+
+//bir sayı tek mi çift mi olduğunu yazdır
+
+//fun main() {
+//
+//
+//
+//    val numberList= arrayOf(1,2,3,4,5,6,7)
+//
+//    var toplam=0
+//    numberList.forEach{number ->
+//        toplam=toplam+number
+//
+//    }
+//    println(toplam)
+//
+//
+//
+//
+//    val sum=0
+//
+//    numberList.forEach{
+//
+//        if(numberList[it]%2==1){
+//            sum=sum+it
+//        }
+//    }
+//
+//    println(sum)
+//
+//
+//
+//    val number=0
+//    numberList.forEach{
+//        if(numberList[it]> number)
+//            number= numberList[it]
+//    }
+//
+//    println(number)
+//
+//
+//
+//    val ciftSayilar= emptyList()
+//    val tekSayilar= emptyList()
+//
+//    numberList.forEach{
+//        if(numberList[it]%2==0){
+//            ciftSayilar.add(numberList[it])
+//        }else{
+//            tekSayilar.add(numberList[it])
+//        }
+//    }
+//
+//    println(ciftSayilar)
+//    println(tekSayilar)
+//
+//
+//}

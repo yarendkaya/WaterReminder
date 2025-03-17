@@ -6,7 +6,8 @@ object WeeklyStatisticsContract {
 
     data class WeeklyStatisticsUiState(
         val weeklyIntake: List<WaterIntake> = emptyList(),
-    )
+        val weeklySuccessPercentage: List<Int> = emptyList(),
+        )
 
     sealed class WeeklyStatisticsAction {
 
