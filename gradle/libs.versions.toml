@@ -1,6 +1,7 @@
 [versions]
 accompanistPager = "0.32.0"
 agp = "8.6.1"
+composechart = "1.0.1"
 firebaseBom = "33.8.0"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
@@ -22,6 +23,7 @@ lottieCompose = "6.1.0"
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+composechart = { module = "ir.naram.composechart:composechart", version.ref = "composechart" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }

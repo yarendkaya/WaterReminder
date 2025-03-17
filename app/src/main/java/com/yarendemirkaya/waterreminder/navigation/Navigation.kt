@@ -221,6 +221,8 @@ fun Navigation(navController: NavHostController) {
                 weeklyStatisticsUiState = uiState,
                 monthlyStatisticsUiState = monthlyUiState
             )
+
+
             LaunchedEffect(Unit) {
                 viewModel.getWeeklyIntakeByTime()
                 monthlyViewModel.getMonthlyIntakeByTime()

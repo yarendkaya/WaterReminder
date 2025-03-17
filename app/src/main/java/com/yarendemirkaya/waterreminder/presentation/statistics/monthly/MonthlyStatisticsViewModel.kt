@@ -15,7 +15,6 @@ import javax.inject.Inject
 class MonthlyStatisticsViewModel @Inject constructor(private val repository: WaterRepository) :
     ViewModel() {
 
-
     private val _uiState = MutableStateFlow(MonthlyStatisticsContract.MonthlyStatisticsUiState())
     val uiState: StateFlow<MonthlyStatisticsContract.MonthlyStatisticsUiState> =
         _uiState.asStateFlow()
