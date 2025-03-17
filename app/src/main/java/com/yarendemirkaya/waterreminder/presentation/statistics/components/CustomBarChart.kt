@@ -23,14 +23,15 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomBarChart(weeklySuccessPercentage: List<Int>) {
-    val borderColor = Color(0xFF374151)
-    val barColor = Color(0xFF1E3A8A)
+    val borderColor = colorResource(id= com.yarendemirkaya.waterreminder.R.color.light_background)
+    val barColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray)
     val density = LocalDensity.current
     val strokeWidth = with(density) { 1.dp.toPx() }
 
@@ -40,14 +41,12 @@ fun CustomBarChart(weeklySuccessPercentage: List<Int>) {
                 .fillMaxWidth()
                 .height(500.dp)
                 .drawBehind {
-                    // X-Axis çizgisi
                     drawLine(
                         color = borderColor,
                         start = Offset(0f, size.height),
                         end = Offset(size.width, size.height),
                         strokeWidth = strokeWidth
                     )
-                    // Y-Axis çizgisi
                     drawLine(
                         color = borderColor,
                         start = Offset(0f, 0f),
@@ -91,7 +90,7 @@ private fun RowScope.Bar(
             .padding(horizontal = 5.dp)
             .height(animatedHeight.dp)
             .weight(1f)
-            .background(color) // Çubuk rengi uygulandı
+            .background(color)
     )
 }
 
