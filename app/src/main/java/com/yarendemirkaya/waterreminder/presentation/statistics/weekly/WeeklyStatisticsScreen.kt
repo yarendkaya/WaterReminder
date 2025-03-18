@@ -15,5 +15,5 @@ fun WeeklyStatisticsScreen(uiState: WeeklyStatisticsContract.WeeklyStatisticsUiS
 //        }
 //    }
 
-    CustomBarChart(weeklySuccessPercentage = uiState.weeklySuccessPercentage)
+    CustomBarChart(weeklySuccessPercentage= uiState.weeklySuccessPercentage)
 }
