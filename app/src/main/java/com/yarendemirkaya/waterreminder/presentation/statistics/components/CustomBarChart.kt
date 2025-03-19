@@ -1,6 +1,6 @@
 package com.yarendemirkaya.waterreminder.presentation.statistics.components
 
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -100,7 +101,7 @@ fun CustomBarChart(weeklySuccessPercentage: List<Int>) {
                 Box(
                     modifier = Modifier.width(40.dp)
                 ) {
-                    Bar(value = value, color = barColor)
+                    Bar(value = value, color = barColor, maxHeight = 600.dp)
                     Text(
                         text = daysOfWeek[index],
                         fontSize = 14.sp,
@@ -117,7 +118,7 @@ fun CustomBarChart(weeklySuccessPercentage: List<Int>) {
 }
 
 @Composable
-private fun Bar(value: Int, color: Color) {
+private fun Bar(value: Int, color: Color, maxHeight: Dp) {
     var startAnimation by remember { mutableStateOf(false) }
     var showValue by remember { mutableStateOf(false) }
 
@@ -125,15 +126,17 @@ private fun Bar(value: Int, color: Color) {
         startAnimation = true
     }
 
+    val maxHeightPx = with(LocalDensity.current) { maxHeight.toPx() }
+
     val animatedHeight by animateFloatAsState(//buradaki sorunu çözemezsem ml cinsinden kaldırıcam sadece yüzddeler gözükecek
-        targetValue = if (startAnimation) value * 4f else 0f,
-        animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
+        targetValue = if (startAnimation) (value) * maxHeightPx else 0f,
+        animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing),
         label = "barHeightAnimation"
     )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom,
+        verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .clickable { showValue = !showValue }
     ) {
@@ -160,5 +163,5 @@ private fun Bar(value: Int, color: Color) {
 @Preview
 @Composable
 fun CustomBarChartPreview() {
-    CustomBarChart(weeklySuccessPercentage = listOf(10, 15, 20, 5, 10, 80, 100))
+    CustomBarChart(weeklySuccessPercentage = listOf(10, 15, 20, 5, 10, 80, 25))
 }

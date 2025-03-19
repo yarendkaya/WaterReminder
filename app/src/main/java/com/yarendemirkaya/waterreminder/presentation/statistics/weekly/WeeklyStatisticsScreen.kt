@@ -1,19 +1,189 @@
 package com.yarendemirkaya.waterreminder.presentation.statistics.weekly
 
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
-import com.yarendemirkaya.waterreminder.presentation.statistics.components.CustomBarChart
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.yarendemirkaya.waterreminder.presentation.statistics.components.BarInfoCard
 
 @Composable
-fun WeeklyStatisticsScreen(uiState: WeeklyStatisticsContract.WeeklyStatisticsUiState){
+fun WeeklyStatisticsScreen(
+    uiState: WeeklyStatisticsContract.WeeklyStatisticsUiState,
+    onAction: (WeeklyStatisticsContract.WeeklyStatisticsAction) -> Unit
+) {
 
-//    LazyColumn {
-//        items(uiState.weeklyIntake.size){
-//            WaterItem(waterIntake = uiState.weeklyIntake[it],
-//                onDeleteClick = {})
-//        }
-//    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        val borderColor =
+            colorResource(id = com.yarendemirkaya.waterreminder.R.color.light_background)
+        val barColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray)
+        val textColor = Color.Black
+        val maxYValue = 2000 // Y ekseni maksimum 2000 ml olacak
+        val step = 200 // 200'er artacak
+        val density = LocalDensity.current
+        val strokeWidth = with(density) { 1.dp.toPx() }
 
-    CustomBarChart(weeklySuccessPercentage= uiState.weeklySuccessPercentage)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(600.dp)
+                .padding(16.dp)
+        ) {
+            Canvas(
+                modifier = Modifier
+
+            ) {
+                for (i in 0..maxYValue step step) {
+                    val yPos = size.height - (i.toFloat() / maxYValue) * size.height
+
+                    drawLine(
+                        color = borderColor,
+                        start = Offset(0f, yPos),
+                        end = Offset(size.width, yPos),
+                        strokeWidth = strokeWidth
+                    )
+                }
+
+                drawLine(
+                    color = borderColor,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = strokeWidth
+                )
+            }
+
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxHeight()
+            ) {
+                for (i in maxYValue downTo 0 step step) {
+                    Text(
+                        text = "$i ml",
+                        fontSize = 12.sp,
+                        color = textColor,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(start = 56.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+
+                uiState.weeklySuccessPercentage.forEachIndexed { index, value ->
+                    Box(
+                        modifier = Modifier.width(40.dp)
+                    ) {
+                        Bar(value = value, color = barColor, onAction = {
+                            onAction(WeeklyStatisticsContract.WeeklyStatisticsAction.OnClickBar)
+                        })
+                        Text(
+                            text = daysOfWeek[index],
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textColor,
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .align(Alignment.BottomCenter)
+                        )
+                    }
+                }
+            }
+        }
+
+        if (uiState.showInfo) {
+            BarInfoCard(uiState.weeklySuccessPercentage.last())
+        }
+    }
 }
+
+
+@Composable
+private fun Bar(value: Int, color: Color, onAction: () -> Unit) {
+    var startAnimation by remember { mutableStateOf(false) }
+    var showValue by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        startAnimation = true
+    }
+
+    val animatedHeight by animateFloatAsState(//buradaki sorunu çözemezsem ml cinsinden kaldırıcam sadece yüzddeler gözükecek
+        targetValue = if (startAnimation) value * 4f else 0f,
+        animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
+        label = "barHeightAnimation"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier
+            .clickable {
+                showValue = !showValue
+                onAction()
+            }
+    ) {
+        if (showValue) {
+            Text(
+                text = "$value",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray),
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
+
+        Spacer(
+            modifier = Modifier
+                .height(animatedHeight.dp)
+                .background(color)
+                .fillMaxWidth()
+        )
+    }
+}
+
+@Preview
+@Composable
+fun WeeklyStatisticsScreenPreview() {
+    WeeklyStatisticsScreen(
+        uiState = WeeklyStatisticsContract.WeeklyStatisticsUiState(
+            weeklySuccessPercentage = listOf(50, 100, 150, 200, 250, 300, 350),
+            showInfo = false
+        ),
+        onAction = {}
+    )
+}
+

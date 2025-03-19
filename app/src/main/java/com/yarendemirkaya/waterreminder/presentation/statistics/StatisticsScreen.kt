@@ -46,7 +46,8 @@ fun StatisticsViewPager(
 
         HorizontalPager(state = pagerState, userScrollEnabled = true) { page ->
             when (page) {
-                0 -> WeeklyStatisticsScreen(uiState = weeklyStatisticsUiState)
+                0 -> WeeklyStatisticsScreen(uiState = weeklyStatisticsUiState, onAction = {
+                })
                 1 -> MonthlyStatisticsScreen(uiState = monthlyStatisticsUiState)
             }
         }

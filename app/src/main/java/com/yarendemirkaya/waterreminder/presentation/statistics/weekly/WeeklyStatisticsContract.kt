@@ -7,9 +7,11 @@ object WeeklyStatisticsContract {
     data class WeeklyStatisticsUiState(
         val weeklyIntake: List<WaterIntake> = emptyList(),
         val weeklySuccessPercentage: List<Int> = emptyList(),
+        val showInfo: Boolean = false
         )
 
     sealed class WeeklyStatisticsAction {
+        data object OnClickBar : WeeklyStatisticsAction()
 
     }
 
