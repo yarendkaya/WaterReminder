@@ -11,7 +11,6 @@ object WeeklyStatisticsContract {
 
     sealed class WeeklyStatisticsAction {
         data object OnClickBar : WeeklyStatisticsAction()
-
     }
 
     sealed class WeeklyStatisticsEffect {

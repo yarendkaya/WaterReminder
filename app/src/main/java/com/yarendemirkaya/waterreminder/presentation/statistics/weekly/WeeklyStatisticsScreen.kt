@@ -1,114 +1,147 @@
 package com.yarendemirkaya.waterreminder.presentation.statistics.weekly
 
-import android.util.Log
+
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yarendemirkaya.waterreminder.presentation.statistics.components.BarInfoCard
 
 @Composable
 fun WeeklyStatisticsScreen(
     uiState: WeeklyStatisticsContract.WeeklyStatisticsUiState,
-    maxValue: Int
+    maxValue: Int,
+    onClick: (WeeklyStatisticsContract.WeeklyStatisticsAction) -> Unit
 ) {
     val barGraphHeight by remember { mutableStateOf(500.dp) }
-    val barGraphWidth by remember { mutableStateOf(25.dp) }
+    val barGraphWidth by remember { mutableStateOf(26.dp) }
 
     val scaleYAxisWidth by remember { mutableStateOf(50.dp) }
     val scaleLineWidth by remember { mutableStateOf(2.dp) }
 
+//    var isCardVisible by remember { mutableStateOf(false) }
+    var selectedBarIndex by remember { mutableStateOf<Int?>(null) }
 
     Column(
         modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
-        Row(
+        Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(barGraphHeight),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Start
+                .clip(RoundedCornerShape(4.dp)),
+            colors = androidx.compose.material3.CardDefaults.cardColors(
+                containerColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.light_background),
+                contentColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray)
+            ),
+            border = BorderStroke(2.dp,
+                colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color))
         ) {
-
-            val stepCount = 11
-            val yAxisValues = List(stepCount) { index -> maxValue - (index * (maxValue / (stepCount - 1))) }
-
-            Box(
+            Row(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .width(scaleYAxisWidth),
-                contentAlignment = Alignment.BottomCenter
+                    .fillMaxWidth()
+                    .height(barGraphHeight),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.Start
             ) {
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.SpaceBetween
+                val stepCount = 11
+                val yAxisValues = List(stepCount) { index -> maxValue - (index * (maxValue / (stepCount - 1))) }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(scaleYAxisWidth),
+                    contentAlignment = Alignment.BottomCenter
                 ) {
-                    yAxisValues.forEach { value ->
-                        Text(text = value.toString())
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(top = 4.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        yAxisValues.forEach { value ->
+                            Text(text = value.toString())
+                        }
                     }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(scaleLineWidth)
+                        .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
+                )
+
+                uiState.weeklySuccessPercentage.forEachIndexed { index, percentage ->
+                    Box(
+                        modifier = Modifier
+                            .padding(start = barGraphWidth, bottom = 2.dp)
+                            .clip(CircleShape)
+                            .width(barGraphWidth)
+                            .fillMaxHeight(percentage.toFloat() / 100)
+                            .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color))
+                            .clickable {
+//                                isCardVisible = selectedBarIndex != index
+                                selectedBarIndex = if (selectedBarIndex == index) null else index
+                                onClick(WeeklyStatisticsContract.WeeklyStatisticsAction.OnClickBar)
+                            }
+                    )
                 }
             }
 
-            Box(modifier = Modifier
-                    .fillMaxHeight()
-                    .width(scaleLineWidth)
-                    .background(Color.Black))
+            Box(
+                modifier = Modifier
+                    .padding(start = scaleYAxisWidth)
+                    .fillMaxWidth()
+                    .height(scaleLineWidth)
+                    .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
+            )
 
-
-            uiState.weeklySuccessPercentage.forEach {
-                Box(
-                    modifier = Modifier
-                        .padding(start = barGraphWidth, bottom = 2.dp)
-                        .clip(CircleShape)
-                        .width(barGraphWidth)
-                        .fillMaxHeight(it.toFloat() / 100)
-                        .background(Color.Black)
-                        .clickable {
-                            Log.d("WeeklyStatisticsScreen", "Bar clicked")
-                        }
-                )
+            Row(
+                modifier = Modifier
+                    .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(barGraphWidth)
+            ) {
+                listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
+                    Text(
+                        modifier = Modifier.width(barGraphWidth),
+                        text = it,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
-
-        Box(
-            modifier = Modifier
-                .padding(start=scaleYAxisWidth)
-                .fillMaxWidth()
-                .height(scaleLineWidth)
-                .background(Color.Black)
-        )
-
-
-        Row(
-            modifier = Modifier
-                .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(barGraphWidth)
-        ) {
-            listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
-                Text(
-                    modifier = Modifier.width(barGraphWidth),
-                    text = it,
-                    textAlign = TextAlign.Center
-                )
-            }
+        Spacer(modifier = Modifier.height(16.dp))
+        if (uiState.showInfo && selectedBarIndex != null) {
+            BarInfoCard(successPercentage = uiState.weeklySuccessPercentage[selectedBarIndex!!])
         }
     }
 }
@@ -123,7 +156,8 @@ fun WeeklyStatisticsScreenPreview() {
             showInfo = false,
             weeklySuccessPercentage = listOf(20, 40, 60, 80, 100, 50, 100)
         ),
-        maxValue = 2000
+        maxValue = 2000,
+        onClick = {}
     )
 }
 

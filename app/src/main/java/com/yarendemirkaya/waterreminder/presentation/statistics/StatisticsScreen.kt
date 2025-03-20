@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun StatisticsViewPager(
     weeklyStatisticsUiState: WeeklyStatisticsContract.WeeklyStatisticsUiState,
-    monthlyStatisticsUiState: MonthlyStatisticsContract.MonthlyStatisticsUiState
+    monthlyStatisticsUiState: MonthlyStatisticsContract.MonthlyStatisticsUiState,
+    onAction: (WeeklyStatisticsContract.WeeklyStatisticsAction) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
@@ -46,9 +47,10 @@ fun StatisticsViewPager(
 
         HorizontalPager(state = pagerState, userScrollEnabled = true) { page ->
             when (page) {
-                0 -> WeeklyStatisticsScreen(uiState = weeklyStatisticsUiState, maxValue = 2000)
+                0 -> WeeklyStatisticsScreen(uiState = weeklyStatisticsUiState, maxValue = 2000, onClick = onAction)
                 1 -> MonthlyStatisticsScreen(uiState = monthlyStatisticsUiState)
             }
         }
+
     }
 }

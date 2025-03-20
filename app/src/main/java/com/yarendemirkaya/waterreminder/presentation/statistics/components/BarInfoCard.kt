@@ -1,19 +1,17 @@
 package com.yarendemirkaya.waterreminder.presentation.statistics.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,21 +21,21 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun BarInfoCard(successPercentage: Int) {
-    val backgroundColor =
-        colorResource(id = com.yarendemirkaya.waterreminder.R.color.light_background)
-    val progressColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray)
-    val textColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.black)
+    val textColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.white)
 
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color),
+        )
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+                .padding(32.dp)
+                .fillMaxWidth()
+                .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -47,17 +45,6 @@ fun BarInfoCard(successPercentage: Int) {
                 fontWeight = FontWeight.Bold,
                 color = textColor,
                 textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LinearProgressIndicator(
-                progress = { successPercentage / 100f },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(50)),
-                color = progressColor,
             )
         }
     }
