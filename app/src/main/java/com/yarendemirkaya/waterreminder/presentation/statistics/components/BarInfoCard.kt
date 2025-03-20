@@ -1,6 +1,5 @@
 package com.yarendemirkaya.waterreminder.presentation.statistics.components
 
-import android.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +23,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun BarInfoCard(successPercentage: Int) {
-    val backgroundColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.light_background)
+    val backgroundColor =
+        colorResource(id = com.yarendemirkaya.waterreminder.R.color.light_background)
     val progressColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray)
     val textColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.black)
 
@@ -52,12 +52,12 @@ fun BarInfoCard(successPercentage: Int) {
             Spacer(modifier = Modifier.height(8.dp))
 
             LinearProgressIndicator(
-                progress = successPercentage / 100f,
-                color = progressColor,
+                progress = { successPercentage / 100f },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
-                    .clip(RoundedCornerShape(50))
+                    .clip(RoundedCornerShape(50)),
+                color = progressColor,
             )
         }
     }
