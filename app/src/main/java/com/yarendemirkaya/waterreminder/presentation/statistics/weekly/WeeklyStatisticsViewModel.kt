@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.yarendemirkaya.waterreminder.common.Resource
 import com.yarendemirkaya.waterreminder.data.repo.WaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -19,6 +22,20 @@ class WeeklyStatisticsViewModel @Inject constructor(private val repository: Wate
     private val _uiState = MutableStateFlow(WeeklyStatisticsContract.WeeklyStatisticsUiState())
     val uiState: StateFlow<WeeklyStatisticsContract.WeeklyStatisticsUiState> =
         _uiState.asStateFlow()
+
+    private val _uiEffect = MutableSharedFlow<WeeklyStatisticsContract.WeeklyStatisticsEffect>()
+    val uiEffect: SharedFlow<WeeklyStatisticsContract.WeeklyStatisticsEffect> = _uiEffect.asSharedFlow()
+
+
+    fun onAction(action: WeeklyStatisticsContract.WeeklyStatisticsAction) {
+        viewModelScope.launch {
+            when (action) {
+                is WeeklyStatisticsContract.WeeklyStatisticsAction.OnClickBar -> {
+                    _uiState.value = _uiState.value.copy(showInfo = true)
+                }
+            }
+        }
+    }
 
 
     fun getWeeklyIntakeByTime() {

@@ -219,9 +219,9 @@ fun Navigation(navController: NavHostController) {
 
             StatisticsViewPager(
                 weeklyStatisticsUiState = uiState,
-                monthlyStatisticsUiState = monthlyUiState
+                monthlyStatisticsUiState = monthlyUiState,
+                onAction = viewModel::onAction
             )
-
 
             LaunchedEffect(Unit) {
                 viewModel.getWeeklyIntakeByTime()
