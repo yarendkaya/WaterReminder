@@ -170,6 +170,7 @@ fun Navigation(navController: NavHostController) {
                 uiEffect = uiEffect
             )
         }
+
         composable("intro") {
             val viewModel: IntroViewModel = hiltViewModel()
             val uiEffect = viewModel.uiEffect

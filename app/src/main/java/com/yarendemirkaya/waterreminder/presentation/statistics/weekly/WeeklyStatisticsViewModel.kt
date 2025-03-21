@@ -20,8 +20,7 @@ class WeeklyStatisticsViewModel @Inject constructor(private val repository: Wate
     ViewModel() {
 
     private val _uiState = MutableStateFlow(WeeklyStatisticsContract.WeeklyStatisticsUiState())
-    val uiState: StateFlow<WeeklyStatisticsContract.WeeklyStatisticsUiState> =
-        _uiState.asStateFlow()
+    val uiState: StateFlow<WeeklyStatisticsContract.WeeklyStatisticsUiState> = _uiState.asStateFlow()
 
     private val _uiEffect = MutableSharedFlow<WeeklyStatisticsContract.WeeklyStatisticsEffect>()
     val uiEffect: SharedFlow<WeeklyStatisticsContract.WeeklyStatisticsEffect> = _uiEffect.asSharedFlow()
@@ -56,7 +55,6 @@ class WeeklyStatisticsViewModel @Inject constructor(private val repository: Wate
             _uiState.value = _uiState.value.copy(weeklySuccessPercentage = weeklySuccessPercentage)
         }
     }
-
 
     private suspend fun getWeeklySuccessPercentage(): List<Int> {
         val weeklyData = repository.getWeeklyIntakeByTime()

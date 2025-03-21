@@ -10,6 +10,4 @@ object MonthlyStatisticsContract {
         val monthlyAverage: Int = 0,
         val monthlyTotal: Int = 0
     )
-
-
 }

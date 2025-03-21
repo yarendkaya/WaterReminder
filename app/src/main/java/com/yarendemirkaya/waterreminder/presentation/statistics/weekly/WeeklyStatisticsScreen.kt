@@ -94,6 +94,7 @@ fun WeeklyStatisticsScreen(
 
                 Box(
                     modifier = Modifier
+                        .padding(top=8.dp)
                         .fillMaxHeight()
                         .width(scaleLineWidth)
                         .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
@@ -140,6 +141,7 @@ fun WeeklyStatisticsScreen(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
+
         if (uiState.showInfo && selectedBarIndex != null) {
             BarInfoCard(successPercentage = uiState.weeklySuccessPercentage[selectedBarIndex!!])
         }

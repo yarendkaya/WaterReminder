@@ -51,6 +51,5 @@ fun StatisticsViewPager(
                 1 -> MonthlyStatisticsScreen(uiState = monthlyStatisticsUiState)
             }
         }
-
     }
 }
