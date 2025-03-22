@@ -170,6 +170,7 @@ fun Navigation(navController: NavHostController) {
                 uiEffect = uiEffect
             )
         }
+
         composable("intro") {
             val viewModel: IntroViewModel = hiltViewModel()
             val uiEffect = viewModel.uiEffect
@@ -220,7 +221,8 @@ fun Navigation(navController: NavHostController) {
             StatisticsViewPager(
                 weeklyStatisticsUiState = uiState,
                 monthlyStatisticsUiState = monthlyUiState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
+                onActionMonthly = monthlyViewModel::onAction
             )
 
             LaunchedEffect(Unit) {
