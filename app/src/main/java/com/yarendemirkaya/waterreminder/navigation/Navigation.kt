@@ -221,7 +221,8 @@ fun Navigation(navController: NavHostController) {
             StatisticsViewPager(
                 weeklyStatisticsUiState = uiState,
                 monthlyStatisticsUiState = monthlyUiState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
+                onActionMonthly = monthlyViewModel::onAction
             )
 
             LaunchedEffect(Unit) {
