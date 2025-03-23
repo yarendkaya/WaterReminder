@@ -3,6 +3,7 @@ package com.yarendemirkaya.waterreminder.presentation.statistics.monthly
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -99,53 +99,59 @@ fun MonthlyStatisticsScreen(
                         .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
                 )
 
-                uiState.monthlySuccessPercentage.forEachIndexed { index, percentage ->
+                Column(modifier = Modifier.horizontalScroll(state = rememberScrollState())) {
+                    Row(modifier = Modifier.fillMaxWidth(),verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.Start){
+                        uiState.monthlySuccessPercentage.forEachIndexed { _, percentage ->
+                            Box(
+                                modifier = Modifier
+                                    .padding(start = barGraphWidth, bottom = 2.dp)
+                                    .clip(CircleShape)
+                                    .width(barGraphWidth)
+                                    .fillMaxHeight(percentage.toFloat() / 100)
+                                    .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color))
+                                    .clickable {
+//                                isCardVisible = selectedBarIndex != index
+                                        onClick(MonthlyStatisticsContract.MonthlyStatisticsAction.OnClickBar)
+                                    }
+                            )
+                        }
+                    }
+
                     Box(
                         modifier = Modifier
-                            .padding(start = barGraphWidth, bottom = 2.dp)
-                            .clip(CircleShape)
-                            .width(barGraphWidth)
-                            .fillMaxHeight(percentage.toFloat() / 100)
-                            .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color))
-                            .clickable {
-//                                isCardVisible = selectedBarIndex != index
-                                onClick(MonthlyStatisticsContract.MonthlyStatisticsAction.OnClickBar)
-                            }
+                            .fillMaxWidth()
+                            .height(scaleLineWidth)
+                            .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
                     )
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .padding(start = scaleYAxisWidth)
-                    .fillMaxWidth()
-                    .height(scaleLineWidth)
-                    .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
-            )
-            Row(
-                modifier = Modifier
-                    .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(barGraphWidth)
-            ) {
-                listOf(
-                    "Jan",
-                    "Feb",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "Aug",
-                    "Sept",
-                    "Oct",
-                    "Nov",
-                    "Dec"
-                ).forEach {
-                    Text(
-                        modifier = Modifier.width(barGraphWidth),
-                        text = it,
-                        textAlign = TextAlign.Center
-                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = barGraphWidth),
+                        horizontalArrangement = Arrangement.spacedBy(barGraphWidth)
+                    ) {
+                        listOf(
+                            "Jan",
+                            "Feb",
+                            "March",
+                            "April",
+                            "May",
+                            "June",
+                            "July",
+                            "Aug",
+                            "Sept",
+                            "Oct",
+                            "Nov",
+                            "Dec"
+                        ).forEach {
+                            Text(
+                                modifier = Modifier.width(barGraphWidth),
+                                text = it,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -162,7 +168,8 @@ fun MonthlyStatisticsScreenPreview() {
             monthlySuccessPercentage = listOf(
                 20, 40, 60, 80, 100, 50,
                 100, 20, 40, 60, 80, 100
-            )),
+            )
+        ),
         maxValue = 2000,
         onClick = {}
     )
