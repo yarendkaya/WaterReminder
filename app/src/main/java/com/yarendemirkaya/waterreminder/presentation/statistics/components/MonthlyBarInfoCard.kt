@@ -12,15 +12,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yarendemirkaya.waterreminder.R
 
 @Composable
-fun BarInfoCard(successPercentage: Int) {
+fun MonthlyBarInfoCard(successPercentage: Int) {
     val textColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.white)
 
     Card(
@@ -33,14 +34,22 @@ fun BarInfoCard(successPercentage: Int) {
     ) {
         Column(
             modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            colorResource(id = R.color.app_color),
+                            colorResource(id = R.color.medium_blue),
+                            colorResource(id = R.color.dark_gray),
+                        )
+                    )
+                )
                 .padding(32.dp)
-                .fillMaxWidth()
-                .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color)),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Günlük hedefinizin %$successPercentage kadarına ulaştınız!",
+                text = "Aylık hedefinizin %$successPercentage kadarına ulaştınız!",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = textColor,
@@ -48,10 +57,4 @@ fun BarInfoCard(successPercentage: Int) {
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun BarInfoCardPreview() {
-    BarInfoCard(50)
 }
