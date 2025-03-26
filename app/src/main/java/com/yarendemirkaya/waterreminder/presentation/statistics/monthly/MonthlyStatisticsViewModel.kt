@@ -50,21 +50,31 @@ class MonthlyStatisticsViewModel @Inject constructor(private val repository: Wat
         }
     }
 
-    private suspend fun getMonthlySuccessPercentage():List<Int>{
+    private suspend fun getMonthlySuccessPercentage(): List<Int> {
         val monthlyData = repository.getMonthlyIntakeByTime()
         if (monthlyData is Resource.Error) return emptyList()
-        val userGoal = 2000
-        val dailyIntake = MutableList(30) { 0 }
+
+        val userGoal = 2000 * 30 // Bir ayda 30 gün varsayarak hedef belirleniyor
         val waterIntakes = (monthlyData as Resource.Success).data
+
+        // Aylık bazda su tüketimini gruplamak için bir harita kullanıyoruz
+        val monthlyIntakeMap = mutableMapOf<Int, Int>() // <Month, TotalWaterIntake>
 
         waterIntakes.forEach { intake ->
             intake.time?.toLongOrNull()?.let { timestamp ->
                 val calendar = java.util.Calendar.getInstance()
                 calendar.timeInMillis = timestamp
-                val dayOfMonth = calendar.get(java.util.Calendar.DAY_OF_MONTH)
-                dailyIntake[dayOfMonth - 1] += intake.amount
+                val month = calendar.get(java.util.Calendar.MONTH) // 0 = Ocak, 1 = Şubat, ...
+
+                monthlyIntakeMap[month] = (monthlyIntakeMap[month] ?: 0) + intake.amount
             }
         }
-        return dailyIntake.map { (it * 100 / userGoal).coerceIn(0, 100) }
+
+        // Her ayın yüzdesini hesapla (Maksimum %100 olacak şekilde)
+        return (0..11).map { month ->
+            val totalIntake = monthlyIntakeMap[month] ?: 0
+            (totalIntake * 100 / userGoal).coerceIn(0, 100)
+        }
     }
+
 }

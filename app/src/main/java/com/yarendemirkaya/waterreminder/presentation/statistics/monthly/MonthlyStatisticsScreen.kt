@@ -2,7 +2,6 @@ package com.yarendemirkaya.waterreminder.presentation.statistics.monthly
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,10 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +27,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yarendemirkaya.waterreminder.R
 
 @Composable
 fun MonthlyStatisticsScreen(
@@ -37,12 +35,12 @@ fun MonthlyStatisticsScreen(
     maxValue: Int,
     onClick: (MonthlyStatisticsContract.MonthlyStatisticsAction) -> Unit
 ) {
-
     val barGraphHeight by remember { mutableStateOf(500.dp) }
-    val barGraphWidth by remember { mutableStateOf(26.dp) }
+    val barGraphWidth by remember { mutableStateOf(15.dp) }
 
     val scaleYAxisWidth by remember { mutableStateOf(50.dp) }
     val scaleLineWidth by remember { mutableStateOf(2.dp) }
+
 
     Column(
         modifier = Modifier
@@ -54,12 +52,12 @@ fun MonthlyStatisticsScreen(
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp)),
             colors = androidx.compose.material3.CardDefaults.cardColors(
-                containerColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.light_background),
-                contentColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray)
+                containerColor = colorResource(id=R.color.light_background),
+                contentColor = colorResource(id = R.color.dark_gray)
             ),
             border = BorderStroke(
                 2.dp,
-                colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color)
+                colorResource(id = R.color.app_color)
             )
         ) {
             Row(
@@ -96,7 +94,7 @@ fun MonthlyStatisticsScreen(
                         .padding(top = 8.dp)
                         .fillMaxHeight()
                         .width(scaleLineWidth)
-                        .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
+                        .background(colorResource(id = R.color.dark_gray))
                 )
 
                 uiState.monthlySuccessPercentage.forEachIndexed { index, percentage ->
@@ -106,11 +104,7 @@ fun MonthlyStatisticsScreen(
                             .clip(CircleShape)
                             .width(barGraphWidth)
                             .fillMaxHeight(percentage.toFloat() / 100)
-                            .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color))
-                            .clickable {
-//                                isCardVisible = selectedBarIndex != index
-                                onClick(MonthlyStatisticsContract.MonthlyStatisticsAction.OnClickBar)
-                            }
+                            .background(colorResource(id = R.color.app_color))
                     )
                 }
             }
@@ -119,27 +113,28 @@ fun MonthlyStatisticsScreen(
                     .padding(start = scaleYAxisWidth)
                     .fillMaxWidth()
                     .height(scaleLineWidth)
-                    .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
+                    .background(colorResource(id = R.color.dark_gray))
             )
+
             Row(
                 modifier = Modifier
-                    .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth)
+                    .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth,bottom=4.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(barGraphWidth)
             ) {
                 listOf(
-                    "Jan",
-                    "Feb",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "Aug",
-                    "Sept",
-                    "Oct",
-                    "Nov",
-                    "Dec"
+                    "J",
+                    "F",
+                    "M",
+                    "A",
+                    "M",
+                    "J",
+                    "Jy",
+                    "A",
+                    "S",
+                    "O",
+                    "N",
+                    "D"
                 ).forEach {
                     Text(
                         modifier = Modifier.width(barGraphWidth),
@@ -152,6 +147,7 @@ fun MonthlyStatisticsScreen(
     }
 }
 
+
 @Preview
 @Composable
 fun MonthlyStatisticsScreenPreview() {
@@ -162,7 +158,8 @@ fun MonthlyStatisticsScreenPreview() {
             monthlySuccessPercentage = listOf(
                 20, 40, 60, 80, 100, 50,
                 100, 20, 40, 60, 80, 100
-            )),
+            )
+        ),
         maxValue = 2000,
         onClick = {}
     )

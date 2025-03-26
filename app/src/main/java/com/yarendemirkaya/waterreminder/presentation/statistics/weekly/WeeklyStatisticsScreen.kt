@@ -127,11 +127,11 @@ fun WeeklyStatisticsScreen(
 
             Row(
                 modifier = Modifier
-                    .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth)
+                    .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth,bottom=4.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(barGraphWidth)
             ) {
-                listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach {
+                listOf("Mn", "Tue", "We", "Thu", "Fri", "Sat", "Sun").forEach {
                     Text(
                         modifier = Modifier.width(barGraphWidth),
                         text = it,
