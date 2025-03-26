@@ -27,10 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.presentation.statistics.components.BarInfoCard
 
 @Composable
@@ -58,11 +61,13 @@ fun WeeklyStatisticsScreen(
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp)),
             colors = androidx.compose.material3.CardDefaults.cardColors(
-                containerColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.light_background),
-                contentColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray)
+                containerColor = colorResource(id = R.color.light_background),
+                contentColor = colorResource(id = R.color.dark_gray)
             ),
-            border = BorderStroke(2.dp,
-                colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color))
+            border = BorderStroke(
+                2.dp,
+                colorResource(id = R.color.app_color)
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -71,8 +76,9 @@ fun WeeklyStatisticsScreen(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Start
             ) {
-                val stepCount = 11
-                val yAxisValues = List(stepCount) { index -> maxValue - (index * (maxValue / (stepCount - 1))) }
+                val stepCount = 5
+                val yAxisValues =
+                    List(stepCount) { index -> maxValue - (index * (maxValue / (stepCount - 1))) }
 
                 Box(
                     modifier = Modifier
@@ -94,20 +100,28 @@ fun WeeklyStatisticsScreen(
 
                 Box(
                     modifier = Modifier
-                        .padding(top=8.dp)
+                        .padding(top = 8.dp)
                         .fillMaxHeight()
                         .width(scaleLineWidth)
-                        .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
+                        .background(colorResource(id = R.color.dark_gray))
                 )
 
                 uiState.weeklySuccessPercentage.forEachIndexed { index, percentage ->
                     Box(
                         modifier = Modifier
-                            .padding(start = barGraphWidth, bottom = 2.dp)
+                            .padding(start = barGraphWidth, bottom = 3.dp)
                             .clip(CircleShape)
                             .width(barGraphWidth)
                             .fillMaxHeight(percentage.toFloat() / 100)
-                            .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color))
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        colorResource(id = R.color.app_color),
+                                        colorResource(id = R.color.medium_blue),
+                                        colorResource(id = R.color.dark_gray),
+                                    )
+                                )
+                            )
                             .clickable {
 //                                isCardVisible = selectedBarIndex != index
                                 selectedBarIndex = if (selectedBarIndex == index) null else index
@@ -122,12 +136,15 @@ fun WeeklyStatisticsScreen(
                     .padding(start = scaleYAxisWidth)
                     .fillMaxWidth()
                     .height(scaleLineWidth)
-                    .background(colorResource(id = com.yarendemirkaya.waterreminder.R.color.dark_gray))
+                    .background(colorResource(id = R.color.dark_gray))
             )
 
             Row(
                 modifier = Modifier
-                    .padding(start = scaleYAxisWidth + barGraphWidth + scaleLineWidth,bottom=4.dp)
+                    .padding(
+                        start = scaleYAxisWidth + barGraphWidth + scaleLineWidth,
+                        bottom = 4.dp
+                    )
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(barGraphWidth)
             ) {
@@ -135,7 +152,8 @@ fun WeeklyStatisticsScreen(
                     Text(
                         modifier = Modifier.width(barGraphWidth),
                         text = it,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = colorResource(id = R.color.dark_gray)
                     )
                 }
             }

@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -67,7 +68,7 @@ fun MonthlyStatisticsScreen(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Start
             ) {
-                val stepCount = 11
+                val stepCount = 5
                 val yAxisValues =
                     List(stepCount) { index -> maxValue - (index * (maxValue / (stepCount - 1))) }
 
@@ -100,11 +101,19 @@ fun MonthlyStatisticsScreen(
                 uiState.monthlySuccessPercentage.forEachIndexed { index, percentage ->
                     Box(
                         modifier = Modifier
-                            .padding(start = barGraphWidth, bottom = 2.dp)
+                            .padding(start = barGraphWidth, bottom = 3.dp)
                             .clip(CircleShape)
                             .width(barGraphWidth)
                             .fillMaxHeight(percentage.toFloat() / 100)
-                            .background(colorResource(id = R.color.app_color))
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        colorResource(id = R.color.app_color),
+                                        colorResource(id = R.color.medium_blue),
+                                        colorResource(id = R.color.dark_gray),
+                                    )
+                                )
+                            )
                     )
                 }
             }
