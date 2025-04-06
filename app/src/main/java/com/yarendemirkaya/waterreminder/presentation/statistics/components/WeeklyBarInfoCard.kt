@@ -23,14 +23,14 @@ import com.yarendemirkaya.waterreminder.R
 
 @Composable
 fun BarInfoCard(successPercentage: Int) {
-    val textColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.white)
+    val textColor = colorResource(id =R.color.white)
 
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color),
+            containerColor = colorResource(id = R.color.app_color),
         )
     ) {
         Column(

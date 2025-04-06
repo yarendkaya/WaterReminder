@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.R.color.app_color
+import com.yarendemirkaya.waterreminder.R.color.background
 import com.yarendemirkaya.waterreminder.R.color.dark_gray
 import com.yarendemirkaya.waterreminder.R.color.light_background
 import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
@@ -51,6 +52,7 @@ import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfile
 import com.yarendemirkaya.waterreminder.presentation.home.components.SetReminderDialog
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterIntakeProgressBar
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
+import com.yarendemirkaya.waterreminder.ui.theme.WaterTypography
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -79,7 +81,6 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
             .background(color = colorResource(id = light_background))
     ) {
         Column(
@@ -88,8 +89,8 @@ fun HomeScreen(
                 .padding(start = 16.dp, top = 32.dp)
                 .background(color = colorResource(id = light_background))
         ) {
-            Text(text = stringResource(id = R.string.welcome_back), fontSize = 36.sp)
-            Text(text = uiState.userName, fontSize = 24.sp, color = colorResource(id = dark_gray))
+            Text(text = stringResource(id = R.string.welcome_back), style =WaterTypography().heading1)
+            Text(text = uiState.userName,style = WaterTypography().name1)
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -123,7 +124,7 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = app_color),
+                containerColor = colorResource(id = background),
                 contentColor = Color.White
             ), onClick = {
                 onAction(
@@ -142,7 +143,7 @@ fun HomeScreen(
             }
 
             Button(colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = app_color),
+                containerColor = colorResource(id = background),
                 contentColor = Color.White
             ), onClick = {
                 onAction(HomeContract.HomeUiAction.OnClickOpenDialog)
@@ -244,12 +245,12 @@ fun WaterGrid(waterIntakes: List<WaterIntake>, onDeleteClick: (WaterIntake) -> U
             .height(350.dp)
             .padding(8.dp)
             .background(
-                color = Color.White,
+                color = colorResource(id= light_background),
                 shape = RoundedCornerShape(16.dp)
             )
             .border(
                 width = 4.dp,
-                color = colorResource(id = app_color),
+                color = colorResource(id = background),
                 shape = RoundedCornerShape(16.dp)
             )
     ) {

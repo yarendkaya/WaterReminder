@@ -10,6 +10,49 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.sp
+import com.yarendemirkaya.waterreminder.R
+
+
+val Poppins = FontFamily(
+    Font(R.font.poppins_medium, FontWeight.Medium),
+)
+
+class WaterTypography{
+    val heading1: TextStyle
+        @Composable
+        get() = TextStyle(
+            fontFamily = Poppins,
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None,
+            ),
+            color = colorResource(id = R.color.light_gray)
+        )
+
+    val name1: TextStyle
+        @Composable
+        get() = TextStyle(
+            fontFamily = Poppins,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None,
+            ),
+            color = colorResource(id = R.color.black)
+        )
+
+
+}
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
