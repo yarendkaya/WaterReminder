@@ -50,6 +50,7 @@ import com.yarendemirkaya.waterreminder.common.collectWithLifecycle
 import com.yarendemirkaya.waterreminder.data.models.WaterIntake
 import com.yarendemirkaya.waterreminder.presentation.home.components.EditProfileDialog
 import com.yarendemirkaya.waterreminder.presentation.home.components.SetReminderDialog
+import com.yarendemirkaya.waterreminder.presentation.home.components.StreakCard
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterIntakeProgressBar
 import com.yarendemirkaya.waterreminder.presentation.home.components.WaterItem
 import com.yarendemirkaya.waterreminder.ui.theme.WaterTypography
@@ -99,21 +100,22 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            StreakCard(23)
             if (uiState.showSetReminderDialog) {
                 SetReminderDialog(onDismiss = {
                     onAction(HomeContract.HomeUiAction.OnClickCloseSetReminderDialog)
                 },
                     onConfirm = { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) })
             }
-            Icon(
-                painter = painterResource(id = R.drawable.ic_alarm),
-                contentDescription = "Icon",
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .align(Alignment.End)
-                    .clickable { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) },
-                tint = Color.Unspecified
-            )
+//            Icon(
+//                painter = painterResource(id = R.drawable.ic_alarm),
+//                contentDescription = "Icon",
+//                modifier = Modifier
+//                    .padding(end = 8.dp)
+//                    .align(Alignment.End)
+//                    .clickable { onAction(HomeContract.HomeUiAction.OnCLickOpenSetReminderDialog) },
+//                tint = Color.Unspecified
+//            )
 
             WaterIntakeProgressBar(successPercentage =
                 uiState.percentOfSuccess.toFloat())

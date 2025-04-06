@@ -10,15 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.yarendemirkaya.waterreminder.R
+import com.yarendemirkaya.waterreminder.ui.theme.WaterTypography
 
 @Composable
 fun WaterIntakeProgressBar(successPercentage: Float) {
@@ -33,20 +31,18 @@ fun WaterIntakeProgressBar(successPercentage: Float) {
     )
 
     Box(
-        modifier = Modifier.size(180.dp),
+        modifier = Modifier.size(200.dp),
         contentAlignment = Alignment.Center
     ) {
         LottieAnimation(
             composition = composition,
             progress = { animatedProgress/2},
-            modifier = Modifier.size(160.dp)
+            modifier = Modifier.size(180.dp)
         )
 
         Text(
             text = "${successPercentage.toInt()}%",
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
+            style = WaterTypography().name1,
         )
     }
 }
