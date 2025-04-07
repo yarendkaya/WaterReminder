@@ -1,4 +1,5 @@
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,9 +48,10 @@ fun BottomNavigationBar(navController: NavController) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(colorResource(id = R.color.light_background))
                 .padding(bottom = 12.dp, start = 8.dp, end = 8.dp)
                 .clip(RoundedCornerShape(18.dp))
-                .border(2.dp, colorResource(id = R.color.app_color), RoundedCornerShape(18.dp))
+                .border(2.dp, colorResource(id = R.color.background), RoundedCornerShape(18.dp))
                 .shadow(16.dp, RoundedCornerShape(18.dp)),
         ) {
             Row(
@@ -78,12 +80,12 @@ fun BottomNavigationBar(navController: NavController) {
                             painter = painterResource(id = item.icon),
                             contentDescription = item.title,
                             modifier = Modifier.size(28.dp),
-                            tint = if (isSelected) colorResource(id = R.color.app_color) else Color.Gray
+                            tint = if (isSelected) colorResource(id = R.color.background) else Color.Gray
                         )
                         Text(
                             text = item.title,
                             fontSize = 12.sp,
-                            color = if (isSelected) colorResource(id = R.color.app_color) else Color.Gray
+                            color = if (isSelected) colorResource(id = R.color.background) else Color.Gray
                         )
                     }
                 }

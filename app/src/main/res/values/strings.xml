@@ -14,9 +14,10 @@
     <string name="description">Create your water drinking routine with water reminder</string>
     <string name="welcome_back">Welcome Back,</string>
     <string name="add_water"> Add (200 ml)</string>
-    <string name="add_icon">Add another amount</string>
+    <string name="add_icon">+</string>
     <string name="remove_icon">-</string>
     <string name="todays_water">Today\'s Water Intake</string>
     <string name="edit_profile_dialog">Hoş Geldiniz!Lütfen daha iyi bir deneyim için profil bilgilerinizi güncelleyin.</string>
     <string name="edit_profile_btn">Profili Düzenle</string>
+    <string name="target">Target</string>
 </resources>

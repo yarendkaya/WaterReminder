@@ -62,6 +62,32 @@ class WaterTypography{
             ),
             color = colorResource(id = R.color.dark_gray)
         )
+    val text2: TextStyle
+        @Composable
+        get() = TextStyle(
+            fontFamily = Poppins,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None,
+            ),
+            color = colorResource(id = R.color.dark_gray)
+        )
+
+    val btnText: TextStyle
+        @Composable
+        get() = TextStyle(
+            fontFamily = Poppins,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Center,
+                trim = LineHeightStyle.Trim.None,
+            ),
+            color = colorResource(id = R.color.light_background)
+        )
+
 
 
 
