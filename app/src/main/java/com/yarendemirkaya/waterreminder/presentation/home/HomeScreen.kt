@@ -2,7 +2,6 @@ package com.yarendemirkaya.waterreminder.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -35,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -158,8 +155,7 @@ fun HomeScreen(
 
         Text(
             modifier = Modifier.padding(start = 24.dp),
-            text = stringResource(id = R.string.todays_water), fontSize = 24.sp,
-            color = colorResource(id = dark_gray)
+            text = stringResource(id = R.string.todays_water), style = WaterTypography().text1
         )
         WaterGrid(waterIntakes = uiState.waterIntakes, onDeleteClick = {
             onAction(HomeContract.HomeUiAction.OnClickDeleteWaterIntake(it))
@@ -244,8 +240,8 @@ fun WaterGrid(waterIntakes: List<WaterIntake>, onDeleteClick: (WaterIntake) -> U
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(350.dp)
-            .padding(8.dp)
+            .height(250.dp)
+            .padding(16.dp)
             .background(
                 color = colorResource(id= light_background),
                 shape = RoundedCornerShape(16.dp)
