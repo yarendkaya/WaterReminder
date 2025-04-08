@@ -22,14 +22,14 @@ import com.yarendemirkaya.waterreminder.R
 
 @Composable
 fun MonthlyBarInfoCard(successPercentage: Int) {
-    val textColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.white)
+    val textColor = colorResource(id = R.color.white)
 
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = com.yarendemirkaya.waterreminder.R.color.app_color),
+            containerColor = colorResource(id = R.color.app_color),
         )
     ) {
         Column(
@@ -39,7 +39,7 @@ fun MonthlyBarInfoCard(successPercentage: Int) {
                         colors = listOf(
                             colorResource(id = R.color.app_color),
                             colorResource(id = R.color.medium_blue),
-                            colorResource(id = R.color.dark_gray),
+                            colorResource(id = R.color.background),
                         )
                     )
                 )

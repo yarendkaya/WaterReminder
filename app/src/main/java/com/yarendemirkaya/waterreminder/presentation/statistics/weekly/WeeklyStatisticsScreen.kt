@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,13 +54,16 @@ fun WeeklyStatisticsScreen(
 
     Column(
         modifier = Modifier
-            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.light_background)),
         verticalArrangement = Arrangement.Top
     ) {
+        DatePicker()
+        Spacer(modifier = Modifier.height(8.dp))
         Card(
             modifier = Modifier
-                .clip(RoundedCornerShape(4.dp)),
+                .clip(RoundedCornerShape(4.dp))
+                .padding(horizontal = 4.dp),
             colors = androidx.compose.material3.CardDefaults.cardColors(
                 containerColor = colorResource(id = R.color.light_background),
                 contentColor = colorResource(id = R.color.dark_gray)
@@ -117,7 +122,7 @@ fun WeeklyStatisticsScreen(
                                     colors = listOf(
                                         colorResource(id = R.color.app_color),
                                         colorResource(id = R.color.medium_blue),
-                                        colorResource(id = R.color.dark_gray),
+                                        colorResource(id = R.color.background),
                                     )
                                 )
                             )
@@ -162,6 +167,42 @@ fun WeeklyStatisticsScreen(
         if (uiState.showInfo && selectedBarIndex != null) {
             BarInfoCard(successPercentage = uiState.weeklySuccessPercentage[selectedBarIndex!!])
         }
+    }
+}
+
+@Composable
+fun DatePicker() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_arrow_left_24),
+            contentDescription = "Arrow Left",
+            modifier = Modifier
+                .size(24.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(colorResource(id = R.color.app_color))
+                .padding(8.dp),
+            tint = colorResource(id = R.color.white)
+        )
+        Text(
+            text = "Date",
+            style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
+        )
+        Icon(
+            painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_arrow_right_24),
+            contentDescription = "Arrow Right",
+            modifier = Modifier
+                .size(24.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(colorResource(id = R.color.app_color))
+                .padding(8.dp),
+            tint = colorResource(id = R.color.white)
+        )
     }
 }
 

@@ -40,7 +40,7 @@ fun BarInfoCard(successPercentage: Int) {
                         colors = listOf(
                             colorResource(id = R.color.app_color),
                             colorResource(id = R.color.medium_blue),
-                            colorResource(id = R.color.dark_gray),
+                            colorResource(id = R.color.background),
                         )
                     )
                 )

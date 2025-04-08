@@ -49,15 +49,14 @@ fun HomeScreen(
     onAction: (HomeContract.HomeUiAction) -> Unit,
     onNavigateToProfileScreen: () -> Unit
 ) {
-    // Handle side effects
     uiEffect.collectWithLifecycle { effect ->
         when (effect) {
             is HomeContract.HomeUiEffect.NavigateToProfile -> onNavigateToProfileScreen()
-            is HomeContract.HomeUiEffect.ShowToast -> Unit // handle toast if needed
+            is HomeContract.HomeUiEffect.ShowToast -> Unit
         }
     }
 
-    // Dialogs
+
     if (uiState.showEditDialog) {
         EditProfileDialog(onAction = onAction)
     }
@@ -77,7 +76,6 @@ fun HomeScreen(
         AddWaterDialog(onAction = onAction)
     }
 
-    // Main content
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +89,10 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             StreakCard(streakCount = 23)
-            Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp).align(Alignment.Start).border(1.dp, color = colorResource(id = background), shape = RoundedCornerShape(8.dp))) {
+            Column(modifier = Modifier
+                .padding(top = 16.dp, start = 16.dp)
+                .align(Alignment.Start)
+                .border(1.dp, color = colorResource(id = background), shape = RoundedCornerShape(8.dp))) {
                 Text(text = stringResource(id = R.string.target), style = WaterTypography().text2)
                 Text(text = "${uiState.dailyGoal} ml", style = WaterTypography().text2)
             }
@@ -140,7 +141,7 @@ fun ActionButtons(onAction: (HomeContract.HomeUiAction) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp), // biraz padding de ekledim daha güzel görünsün
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         Button(
@@ -151,7 +152,7 @@ fun ActionButtons(onAction: (HomeContract.HomeUiAction) -> Unit) {
                     )
                 )
             },
-            shape = RoundedCornerShape(16.dp), // köşeleri yuvarlattık
+            shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = background),
                 contentColor = Color.White
@@ -162,7 +163,7 @@ fun ActionButtons(onAction: (HomeContract.HomeUiAction) -> Unit) {
 
         Button(
             onClick = { onAction(HomeContract.HomeUiAction.OnClickOpenDialog) },
-            shape = RoundedCornerShape(16.dp), // köşeleri yuvarlattık
+            shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = background),
                 contentColor = Color.White
@@ -172,8 +173,6 @@ fun ActionButtons(onAction: (HomeContract.HomeUiAction) -> Unit) {
         }
     }
 }
-
-
 
 @Composable
 fun WaterGrid(

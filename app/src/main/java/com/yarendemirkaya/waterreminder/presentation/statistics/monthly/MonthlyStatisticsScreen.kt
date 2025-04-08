@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yarendemirkaya.waterreminder.R
 import com.yarendemirkaya.waterreminder.presentation.statistics.components.MonthlyBarInfoCard
+import com.yarendemirkaya.waterreminder.presentation.statistics.weekly.DatePicker
 
 @Composable
 fun MonthlyStatisticsScreen(
@@ -51,13 +52,16 @@ fun MonthlyStatisticsScreen(
 
     Column(
         modifier = Modifier
-            .padding(start = 12.dp, end = 12.dp, top = 12.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.light_background)),
         verticalArrangement = Arrangement.Top
     ) {
+        DatePicker()
+        Spacer(modifier = Modifier.height(8.dp))
         Card(
             modifier = Modifier
-                .clip(RoundedCornerShape(4.dp)),
+                .clip(RoundedCornerShape(4.dp))
+                .padding(horizontal = 4.dp),
             colors = androidx.compose.material3.CardDefaults.cardColors(
                 containerColor = colorResource(id = R.color.light_background),
                 contentColor = colorResource(id = R.color.dark_gray)
@@ -116,7 +120,7 @@ fun MonthlyStatisticsScreen(
                                     colors = listOf(
                                         colorResource(id = R.color.app_color),
                                         colorResource(id = R.color.medium_blue),
-                                        colorResource(id = R.color.dark_gray),
+                                        colorResource(id = R.color.background),
                                     )
                                 )
                             )
